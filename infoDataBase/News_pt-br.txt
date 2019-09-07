@@ -2,4 +2,5 @@
  ApÃ³s um longo caminho trilhado, o PetecaVirtual estÃ¡ de pÃ©. Podem
 aparecer alguns problemas, entÃ£o por favor, reportem qualquer coisa
 estranha para nÃ³s.
+Estamos na vers㯠v0.1.16 , aguardando por futuras atulaiza緥s.
 Postado em 7, Setembro, 2018 por PetecaVirtual
