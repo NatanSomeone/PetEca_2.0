@@ -82,8 +82,14 @@ public class MovementDriver : MonoBehaviour
     {
         if (ang == -2)
         {
-            ang = (rigidbodyRobo.rotation.eulerAngles.y + DesiredDisplacement) % 360;
+            float pAng = rigidbodyRobo.rotation.eulerAngles.y;
+            pAng %= 360;if (pAng < 0) pAng += 360f;
+
+            ang = (pAng + DesiredDisplacement) % 360;
             fwdPosition = Quaternion.Euler(0, tRotation, 0) * initialFwdPosition;
+
+            var a = Mathf.Sign(pAng-ang);
+            meshRend.SetBlendShapeWeight( (a >= 0) ? 1 : 2, 100);
         }
 
         var dspCorrection = (Mathf.Abs(DesiredDisplacement) < 0.1) ? Mathf.Abs(DesiredDisplacement) * 10 : 1;
@@ -109,10 +115,13 @@ public class MovementDriver : MonoBehaviour
 
             if (Mathf.Abs(dang) < 0.001f)
             {
+                meshRend.SetBlendShapeWeight(1, 0);
+                meshRend.SetBlendShapeWeight(2, 0);
+
                 DesiredDisplacement = 0;
                 ang = -1;
             }
-            else
+            else//terá rotação
             {
                 Vector3 deltaRotation = new Vector3(0, vRotacao, 0) * VelocidadeRotacao * Time.fixedDeltaTime;
                 rigidbodyRobo.MoveRotation(rigidbodyRobo.rotation * Quaternion.Euler(deltaRotation));
@@ -124,13 +133,12 @@ public class MovementDriver : MonoBehaviour
         {
 
             float clawProgress = meshRend.GetBlendShapeWeight(0);
-            if (clawState && clawProgress < 100)
+            var clawControl = (clawState && clawProgress < 100) ? 1 : (!clawState && clawProgress > 0) ? -1 : 0;
+            if (clawControl!=0)
             {
-                meshRend.SetBlendShapeWeight(0, clawProgress + VelocidadedaGarra*Time.fixedDeltaTime*100);
-            }
-            else if (!clawState && clawProgress > 0)
-            {
-                meshRend.SetBlendShapeWeight(0, clawProgress - VelocidadedaGarra*Time.fixedDeltaTime*100);
+                meshRend.SetBlendShapeWeight(0,
+                    Mathf.Clamp(clawProgress + clawControl * VelocidadedaGarra * Time.fixedDeltaTime * 100,
+                    0, 100));
             }
             else
             {
@@ -161,7 +169,7 @@ public class MovementDriver : MonoBehaviour
                             $"</b></size></color>");
         }
         GUI.Label(new Rect(0, 0, Screen.width, Screen.height),
-            $"<color=#000099>Fwd{tRotation}\nReal:{realPosition}\tDelta:{(realPosition - transform.position).magnitude:F5}</color>");
+            $"<color=#000099>Fwd{tRotation}\nReal:{realPosition}\tDelta:{(realPosition - transform.position).magnitude:F5}\nDang{ang - angN}</color>");
 
     }
 }
