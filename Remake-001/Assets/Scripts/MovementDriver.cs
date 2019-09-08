@@ -26,7 +26,7 @@ public class MovementDriver : MonoBehaviour
             if (desiredDisplacement <= 1E-8f)
             {
                 desiredDisplacement = vRotacao = vTranslacao = 0;
-                ExtLibControl.DeQueueAction();
+                ExtLibControl.DeQueueAction(ExtLibControl.userActions.Peek());
             }
         }
     }
@@ -143,7 +143,7 @@ public class MovementDriver : MonoBehaviour
             else
             {
                 clawInAction = false;
-                ExtLibControl.DeQueueAction();
+                ExtLibControl.DeQueueAction(ExtLibControl.userActions.Peek());
             }
         }
 
@@ -152,24 +152,24 @@ public class MovementDriver : MonoBehaviour
     private void OnGUI()
     {
 
-        var angN = rigidbodyRobo.rotation.eulerAngles.y;
-        var diff = Mathf.Abs(ang - angN);
-        var dang = Mathf.Abs(Mathf.Min(diff, 360 - diff));
-        if (DesiredDisplacement != 0)
-        {
+        //var angN = rigidbodyRobo.rotation.eulerAngles.y;
+        //var diff = Mathf.Abs(ang - angN);
+        //var dang = Mathf.Abs(Mathf.Min(diff, 360 - diff));
+        //if (DesiredDisplacement != 0)
+        //{
 
-            GUI.Label(new Rect(Screen.width / 2 - 200, Screen.height - 100, 400, 100),
-                            $"<color=#06357a><size=25><b>" +
-                            $"Deslocando " +
-                            $"{DesiredDisplacement:F2} u \n" +
-                            ((vRotacao != 0) ? (
-                            $"no sentido {((vRotacao == -1) ? "anti" : "")}horário \n " +
-                            $"faltando {dang:F2}° " +
-                            $"para {ang:F2}°") : "") +
-                            $"</b></size></color>");
-        }
-        GUI.Label(new Rect(0, 0, Screen.width, Screen.height),
-            $"<color=#000099>Fwd{tRotation}\nReal:{realPosition}\tDelta:{(realPosition - transform.position).magnitude:F5}\nDang{ang - angN}</color>");
+        //    GUI.Label(new Rect(Screen.width / 2 - 200, Screen.height - 100, 400, 100),
+        //                    $"<color=#06357a><size=25><b>" +
+        //                    $"Deslocando " +
+        //                    $"{DesiredDisplacement:F2} u \n" +
+        //                    ((vRotacao != 0) ? (
+        //                    $"no sentido {((vRotacao == -1) ? "anti" : "")}horário \n " +
+        //                    $"faltando {dang:F2}° " +
+        //                    $"para {ang:F2}°") : "") +
+        //                    $"</b></size></color>");
+        //}
+        //GUI.Label(new Rect(0, 0, Screen.width, Screen.height),
+        //    $"<color=#000099>Fwd{tRotation}\nReal:{realPosition}\tDelta:{(realPosition - transform.position).magnitude:F5}\nDang{ang - angN}</color>");
 
     }
 }
