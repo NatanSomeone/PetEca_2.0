@@ -35,7 +35,7 @@ public class MovementDriver : MonoBehaviour
     private Vector3 initialFwdPosition, fwdPosition;
     private float tRotation;
 
-    bool clawState;//1 UP - 0 Down
+    [HideInInspector]public bool clawState;//1 UP - 0 Down
     bool clawInAction;
 
     private void Start()

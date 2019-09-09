@@ -13,7 +13,8 @@ public class PersistentScript : MonoBehaviour
 
     //GameVariables
     public static MapDisplayInfo currentMap;
-    public static bool IsPlaying => FindObjectOfType<MenuManager_InGame>()!=null;
+    public static bool IsPlaying;
+    public static string incomingMessage;
 
 
     private void Awake()
@@ -30,11 +31,11 @@ public class PersistentScript : MonoBehaviour
     {
         if (a.type == "hold")
         {
-            ExecuteOnMainThread.Enqueue(delegate
-            {
+            Debug.Log("holdCommand"+Time.time);
+            ExecuteOnMainThread.Enqueue(()=>{
+                Debug.Log("holdExecution"+Time.time);
                 persistentScript.StartCoroutine(WaitAndDo(a.value, () => ExtLibControl.DeQueueAction(a)));
-            }
-            );
+            });
 
         }
 
@@ -49,7 +50,7 @@ public class PersistentScript : MonoBehaviour
 
     private void OnSceneChanged(Scene arg0, Scene arg1)
     {
-
+        IsPlaying = FindObjectOfType<MenuManager_InGame>() != null;
         ExtLibControl.ClearActionQueue();
     }
 
@@ -60,8 +61,10 @@ public class PersistentScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X))
             ExtLibControl.ClearActionQueue(); //Limpa todas as Ações
 
-
-        ExecuteOnMainThread.Dequeue().Invoke();
+        while(ExecuteOnMainThread.Count>0)
+        {
+            ExecuteOnMainThread.Dequeue().Invoke();
+        }
 
     }
     private void OnApplicationQuit()
@@ -71,8 +74,8 @@ public class PersistentScript : MonoBehaviour
 
     public IEnumerator WaitAndDo(float time, Action action)
     {
-        Debug.Log($"<color=#000066>Waiting {time} seconds...</color>\n{Time.time}");
+        Debug.Log($"<color=#000066>Waiting {time} seconds...</color>");
         yield return new WaitForSecondsRealtime(time);
-        action();
+        action.Invoke();
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
 public static class ExtLibControl
 {
@@ -13,8 +13,12 @@ public static class ExtLibControl
     public static event EventHandler<UserAction> OnCommandCalled;
 
     public static Queue<UserAction> userActions = new Queue<UserAction>();
-    
+
+#pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
+#pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
     public struct UserAction
+#pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
+#pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
     {
         public string type;
         //0 -   Movement
@@ -122,12 +126,12 @@ public static class ExtLibControl
             if (userActions.Count == 1)
                 MoveActionQueue();
         };
-       
+
     }
 
     public static void DeQueueAction(UserAction actionToDequeue)
     {
-        if(userActions.Peek()== actionToDequeue)
+        if (userActions.Peek() == actionToDequeue)
         {
             if (userActions.Count > 0)
             {
@@ -144,12 +148,15 @@ public static class ExtLibControl
     public static void MoveActionQueue()
     {
         //Debug.Log($"{userActions.Count-1} ações na fila- tipo:{userActions.Peek().type}, valor:{userActions.Peek().value}");
-
-        OnCommandCalled?.Invoke(null, userActions.Peek());
-        MenuManager_InGame.UpdateTaskQueueList();
+        if (PersistentScript.IsPlaying)
+        {
+            OnCommandCalled?.Invoke(null, userActions.Peek());
+            MenuManager_InGame.UpdateTaskQueueList();
+        }
     }
 
-    public static void ClearActionQueue() {
+    public static void ClearActionQueue()
+    {
         userActions.Clear();
         MenuManager_InGame.UpdateTaskQueueList();
     }
