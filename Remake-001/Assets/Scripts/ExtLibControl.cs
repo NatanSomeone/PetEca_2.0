@@ -12,6 +12,15 @@ public static class ExtLibControl
 
     public static event EventHandler<UserAction> OnCommandCalled;
 
+    public static UActionHolder currentUAction;
+
+    public class UActionHolder
+    {
+        public UserAction userAction;
+        public bool done;
+        public float t0;
+    }
+
     public static Queue<UserAction> userActions = new Queue<UserAction>();
 
 #pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
@@ -20,16 +29,10 @@ public static class ExtLibControl
 #pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
 #pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
     {
-        public string type;
-        //0 -   Movement
-        //1 -   Rotation
-        //2 -   Pause
-        //3 -   Restart
-        //4 -   Claw
-        public int target;
-        //0 -   RedBot
-        //1 -   BlueBot
-        public float value;
+        public string type; //tipo de ação
+        public int target; //Id do Robo
+        public float value; //dado vinculado
+
         public UserAction(string type, int target, float value)
         { this.type = type; this.target = target; this.value = value; }
 
@@ -43,7 +46,7 @@ public static class ExtLibControl
         public static bool operator !=(UserAction a, UserAction b) => (a.type != b.type) || (a.target != b.target) || (a.value != b.value);
     }
 
-    public static void INIT()
+    public static void INIT() //inicializa a comunicação por "pipes"
     {
         PServer1 = new NamedPipeServer(@"\\.\pipe\PetServerPipe0", 0);//sread
         PServer2 = new NamedPipeServer(@"\\.\pipe\PetServerPipe1", 1);//swrite
@@ -53,7 +56,7 @@ public static class ExtLibControl
     }
 
 
-    private static void SeverResponse(object sender, string readValue)
+    private static void SeverResponse(object sender, string readValue) //responde ao recebimento de dados, lendo o que foi rescebido e criando açoes
     {
         string st = $"Recebido->{readValue}";
         if (PersistentScript.IsPlaying) //ignora tudo se não tiver jogando
@@ -123,42 +126,36 @@ public static class ExtLibControl
 
             //Debug.Log($"{st}\n{userActions.Count} ações na fila");
 
-            if (userActions.Count == 1)
-                MoveActionQueue();
+            //if (userActions.Count == 1) //encarrilha açoes
+            //    MoveActionQueue();
         };
 
     }
 
-    public static void DeQueueAction(UserAction actionToDequeue)
+    public static void DeQueueAction() //tira a ultima ação de fila *sem rodar
     {
-        if (userActions.Peek() == actionToDequeue)
-        {
-            if (userActions.Count > 0)
-            {
-                userActions.Dequeue();
-                MenuManager_InGame.UpdateTaskQueueList();
-            }
-            if (userActions.Count > 0)
-                MoveActionQueue();
-        }
-
-
-    }
-
-    public static void MoveActionQueue()
-    {
-        //Debug.Log($"{userActions.Count-1} ações na fila- tipo:{userActions.Peek().type}, valor:{userActions.Peek().value}");
-        if (PersistentScript.IsPlaying)
-        {
-            OnCommandCalled?.Invoke(null, userActions.Peek());
-            MenuManager_InGame.UpdateTaskQueueList();
-        }
-    }
-
-    public static void ClearActionQueue()
-    {
-        userActions.Clear();
+        currentUAction = null; // quando pronta é nula
         MenuManager_InGame.UpdateTaskQueueList();
+        
+    }
+
+    public static void MoveActionQueue()//chama a proxima ação da fila
+    {
+        if ((userActions.Count > 0))
+        {
+            var usrAction = userActions.Dequeue();
+            OnCommandCalled?.Invoke(null, usrAction); // a ação atual é a da frente na fila
+            currentUAction = new UActionHolder { userAction = usrAction, t0 = Time.time, done = false };
+        }
+        else{
+            currentUAction = null;
+        }
+    }
+
+    public static void ClearActionQueue() //limpa a fila de ações
+    {
+        DeQueueAction();
+        userActions.Clear();
     }
 
     public static void END()

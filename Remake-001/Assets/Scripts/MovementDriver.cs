@@ -26,7 +26,7 @@ public class MovementDriver : MonoBehaviour
             if (desiredDisplacement <= 1E-8f)
             {
                 desiredDisplacement = vRotacao = vTranslacao = 0;
-                ExtLibControl.DeQueueAction(ExtLibControl.userActions.Peek());
+                ExtLibControl.DeQueueAction();
             }
         }
     }
@@ -143,7 +143,7 @@ public class MovementDriver : MonoBehaviour
             else
             {
                 clawInAction = false;
-                ExtLibControl.DeQueueAction(ExtLibControl.userActions.Peek());
+                ExtLibControl.DeQueueAction();
             }
         }
 

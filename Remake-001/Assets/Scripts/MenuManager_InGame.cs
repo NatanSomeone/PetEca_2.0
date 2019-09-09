@@ -36,6 +36,7 @@ public class MenuManager_InGame : MonoBehaviour
         tasksToDisp = TaskQueueList.childCount - 1;
 
 
+
         TaskQueueList.parent.GetComponent<Toggle>().onValueChanged
             .AddListener(v => { TaskQueueList.gameObject.SetActive(v); if (v) UpdateTaskQueueList(); });
 
@@ -75,6 +76,10 @@ public class MenuManager_InGame : MonoBehaviour
 
 
     }
+    private void Start()
+    {
+        PersistentScript.canRunUserActions = true;
+    }
 
     public static void PauseLevel(bool v)//TODO verificar...
     {
@@ -102,10 +107,10 @@ public class MenuManager_InGame : MonoBehaviour
         if (!File.Exists(path + "/petecavirtual.h"))
             File.Copy(Application.dataPath + "/Resources/Libraries~/petecavirtual.h", path + "/petecavirtual.h", false);
 
-        if (!File.Exists($"{path}/{PersistentScript.currentMap.name}-file.cpp"))
-            File.Copy(Application.dataPath + "/Resources/Libraries~/MasterExample.cpp", $"{path}/{PersistentScript.currentMap.name}-file.cpp", false);
+        if (!File.Exists($"{path}/{PersistentScript.currentMap?.name}-file.cpp"))
+            File.Copy(Application.dataPath + "/Resources/Libraries~/MasterExample.cpp", $"{path}/{PersistentScript.currentMap?.name}-file.cpp", false);
 
-        System.Diagnostics.Process.Start($"{path}/{PersistentScript.currentMap.name}-file.cpp");
+        System.Diagnostics.Process.Start($"{path}/{PersistentScript.currentMap?.name}-file.cpp");
     }
 
     public static void ReloadLevel()
@@ -125,13 +130,13 @@ public class MenuManager_InGame : MonoBehaviour
             PersistentScript.ExecuteOnMainThread.Enqueue(() => PauseLevel(true));
             //ExtLibControl.PServer2.SendMessage($"Pausing", ExtLibControl.PServer2.clientse);
             Debug.Log("<color=#006666>Pausing....</color>");
-            ExtLibControl.DeQueueAction(a);
+            ExtLibControl.DeQueueAction();
         }
         else if (a.type == "getTIME")
         {
             ExtLibControl.PServer2.SendMessage($"{timePassed}", ExtLibControl.PServer2.clientse);
             Debug.Log($"<color=#00ff00>Time goted: time ={timePassed} seconds...</color>");
-            ExtLibControl.DeQueueAction(a);
+            ExtLibControl.DeQueueAction();
         }
 
     }

@@ -10,6 +10,10 @@ int Main(){
 	Move(v);
 	Wait(1);
 	
+	cout<<"rodar:";cin>>v;
+	Rotate(v);
+	Wait(1);
+	
 	
 	getchar();
 	DoLOOP= TRUE;

@@ -5,14 +5,22 @@ using UnityEngine;
 public class ItemHandler : MonoBehaviour
 {
 
+
     MovementDriver driver;
 
+    static Transform ItemCollection;
     Transform cageTransform;
+    Transform ItemHeld;
+    Transform triggObj;
+
     bool graping;
+    
+
 
 
     private void Awake()
     {
+        if (ItemCollection == null) ItemCollection = GameObject.Find("ItemCollection").transform;
         driver = GetComponent<MovementDriver>();
 
         cageTransform= transform.Find("cage");
@@ -22,25 +30,53 @@ public class ItemHandler : MonoBehaviour
     {
         if (other.gameObject.tag == "pickItem")
         {
-            if (!driver.clawState)//gaiola levantada
+            triggObj = other.transform;
+            if (ItemHeld == null)
             {
-                graping = true;
-            }
-            else if(graping)
-            {
-                other.transform.SetParent(cageTransform);
-                other.transform.localPosition = Vector3.zero;
+                if (driver.clawState)//gaiola levantada
+                {
+                    graping = true;
+                }
+                else if(graping) //Item é Pego
+                {
+                    triggObj.SetParent(cageTransform);
+                    triggObj.localPosition = Vector3.zero;
+                    ItemHeld = triggObj;
+                    graping = false;
+                }
             }
 
         }
 
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "pickItem")
+        {
+            if (ItemHeld != null)
+            {
+                if (driver.clawState)//Gaiola levantada
+                {
+                    triggObj.SetParent(cageTransform);
+                }
+                else // tá cheio
+                {
+                    Debug.Log("tá cheio");
+                }
+            }
+
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        triggObj = null;
     }
 
     private void OnCollisionStay(Collision c)
     {
         //Vector3 dir = c.GetContact(0).point - transform.position;
         string cTag = c.gameObject.tag;
-        if (cTag == "pickItem" && (!driver.clawState) && !graping)//se encostou e não está com a gaiola levantada, violou... fora
+        if (cTag == "pickItem" && (!driver.clawState) && !graping && c.transform != triggObj)//se encostou e não está com a gaiola levantada, violou... fora
         {
             PersistentScript.incomingMessage = "Levante sua gaiola para pegar o objeto, sem empurrar!!";
             MenuManager_InGame.ReloadLevel();

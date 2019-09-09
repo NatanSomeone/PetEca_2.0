@@ -11,33 +11,34 @@ public class PersistentScript : MonoBehaviour
     public static PersistentScript persistentScript;
     public static readonly Queue<Action> ExecuteOnMainThread = new Queue<Action>();
 
+
     //GameVariables
     public static MapDisplayInfo currentMap;
     public static bool IsPlaying;
+    public static bool canRunUserActions;
     public static string incomingMessage;
+
 
 
     private void Awake()
     {
-        if (persistentScript == null)
-        { persistentScript = this; DontDestroyOnLoad(gameObject); }
-        else Destroy(gameObject);
+        if (persistentScript == null)                                    //
+        { persistentScript = this; DontDestroyOnLoad(gameObject); }      //garante que só tenha um desse script na cena
+        else Destroy(gameObject);                                        //
 
-        ExtLibControl.OnCommandCalled += UserActionsControl;
+        ExtLibControl.OnCommandCalled += UserActionsControl; //cahamado sempre que a proxima ação da fila é liberada
 
     }
 
     private void UserActionsControl(object sender, ExtLibControl.UserAction a)
     {
-        if (a.type == "hold")
-        {
-            Debug.Log("holdCommand"+Time.time);
-            ExecuteOnMainThread.Enqueue(()=>{
-                Debug.Log("holdExecution"+Time.time);
-                persistentScript.StartCoroutine(WaitAndDo(a.value, () => ExtLibControl.DeQueueAction(a)));
-            });
+        //if (a.type == "hold")
+        //{
+        //    ExecuteOnMainThread.Enqueue(()=>{
+        //    persistentScript.StartCoroutine(WaitAndDo(a.value, () => ExtLibControl.currentUAction.done = true ));
+        //    });
 
-        }
+        //}
 
 
     }
@@ -57,16 +58,43 @@ public class PersistentScript : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Z))
-            ExtLibControl.DeQueueAction(ExtLibControl.userActions.Peek()); //Libera a ultima ação --para casos de encurralamento
+            ExtLibControl.DeQueueAction(); //Libera a ultima ação --para casos de encurralamento
         if (Input.GetKeyDown(KeyCode.X))
             ExtLibControl.ClearActionQueue(); //Limpa todas as Ações
 
-        while(ExecuteOnMainThread.Count>0)
+        while (ExecuteOnMainThread.Count > 0)
         {
             ExecuteOnMainThread.Dequeue().Invoke();
         }
+        if (ExtLibControl.userActions.Count > 0)
+        {
+            bool cNull = (ExtLibControl.currentUAction == null);
+            if ((cNull ? true : ExtLibControl.currentUAction.done) && canRunUserActions)
+            {
+                ExtLibControl.MoveActionQueue();
+            }
+
+            if (cNull)
+            {
+                var u = ExtLibControl.currentUAction.userAction;
+                if (u.type == "hold" && u.target == -1)
+                {
+                    u.target = 1;
+                    StartCoroutine(WaitAndDo(u.value, () => ExtLibControl.DeQueueAction()));
+                }
+            }
+
+        }
+
 
     }
+
+    private void OnGUI()
+    {
+        //GUI.Label(new Rect(0, 30, Screen.width, Screen.height - 30),
+        //    $"<color=#000099> {ExtLibControl.currentUAction?.userAction.type}-{ExtLibControl.userActions.Count}\n\tActionDone:   {((ExtLibControl.currentUAction == null) ? true : ExtLibControl.currentUAction.done)}\n\tCanRun:   {canRunUserActions}</color>");
+    }
+
     private void OnApplicationQuit()
     {
         ExtLibControl.END();
