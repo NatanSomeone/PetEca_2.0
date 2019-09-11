@@ -24,10 +24,10 @@ int Main(){
 				Claw();
 				Wait(1);
 				Claw();
-				Sleep(1000);
+				Sleep(2000);
 			}
 			Rotate(-90);
-			Sleep(3500);
+			Sleep(5000);
 		}
 		
 		DoLOOP= TRUE;
