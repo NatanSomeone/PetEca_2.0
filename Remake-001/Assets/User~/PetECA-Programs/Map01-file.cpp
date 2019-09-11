@@ -3,19 +3,29 @@
 using namespace std;
 int Main(){
 	
-	LOG = TRUE;
-	float v;
-	cout<<"mover:";cin>>v;
+	cout<<"Hi, welcome the emulation is starting now."<<endl;
+	cout<<"..."<<endl;Sleep(1000);
+
+		LOG = TRUE;
+			
+		Wait(5);
 	
-	Move(v);
-	Wait(1);
+		for(int j=0;j<4;j++)
+		{
+			Wait(2);
+			Move(3);
+			for(int i = 0;i<3;i++){
+				Rotate(-90);
+				Move(3);
+				Claw();
+				Wait(1);
+				Claw();
+			}
+			Rotate(-90);
+		}
+		
+		DoLOOP= TRUE;
+		Finished= TRUE;		
+		
 	
-	cout<<"rodar:";cin>>v;
-	Rotate(v);
-	Wait(1);
-	
-	
-	getchar();
-	DoLOOP= TRUE;
-	Finished= TRUE;	
 }

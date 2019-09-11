@@ -25,7 +25,7 @@ public class MenuManager_InGame : MonoBehaviour
     //Variaveis inerente ao mapa;
     public static float score;
     public static float timePassed;
-    public static bool isPlaying = true;//check if the game is not paused
+    public static bool isPlaying = false;//check if the game is not paused
 
 
     private void Awake()
@@ -61,6 +61,14 @@ public class MenuManager_InGame : MonoBehaviour
         //MessageBox
         MessageBoxOkButton.onClick.AddListener(delegate { MessageBox.gameObject.SetActive(false); PauseLevel(false); });
 
+        
+        
+    }
+    private void Start()
+    {
+        isPlaying = true;
+        PersistentScript.canRunUserActions = true;
+
         //starMessage
         //mudar para PersistentScript.currentMap.detailedDescription
         if (PersistentScript.incomingMessage == "Welcome")
@@ -69,20 +77,17 @@ public class MenuManager_InGame : MonoBehaviour
 	Ele deve ser capaz de direcionar o Robo ao quadro espaço amarelo, coletar seus itens e depositar no espaço vermelho, voltando ao espaço inicial para reposição de itens, o Jogo termina com três itens;
     Para pegar um item , <b>levante a gaiola</b> aproxime-se dele e <b>abaixe a gaiola</b> em cima. Já para largar-lo , basta erguer a gaiola");
         }
-        else if(PersistentScript.incomingMessage != null)
+        else if (PersistentScript.incomingMessage != null)
         {
             ShowInfoMessage(PersistentScript.incomingMessage);
         }
-
-
-    }
-    private void Start()
-    {
-        PersistentScript.canRunUserActions = true;
     }
 
     public static void PauseLevel(bool v)//TODO verificar...
     {
+        ExtLibControl.ClearActionQueue();
+        ExtLibControl.currentUAction = null;
+
         isPlaying = !v;
         instance.FileMenu.parent.GetChild(1).gameObject.SetActive(v);
         Time.timeScale = v ? 0 : 1;
@@ -107,10 +112,20 @@ public class MenuManager_InGame : MonoBehaviour
         if (!File.Exists(path + "/petecavirtual.h"))
             File.Copy(Application.dataPath + "/Resources/Libraries~/petecavirtual.h", path + "/petecavirtual.h", false);
 
-        if (!File.Exists($"{path}/{PersistentScript.currentMap?.name}-file.cpp"))
-            File.Copy(Application.dataPath + "/Resources/Libraries~/MasterExample.cpp", $"{path}/{PersistentScript.currentMap?.name}-file.cpp", false);
+        string fileName = PersistentScript.currentMap?.name + "-file";
 
-        System.Diagnostics.Process.Start($"{path}/{PersistentScript.currentMap?.name}-file.cpp");
+        if (!File.Exists($"{path}/{fileName}.cpp"))
+        {
+            File.Copy(Application.dataPath + "/Resources/Libraries~/MasterExample.cpp", $"{path}/{fileName}.cpp", false);
+        }else
+        {
+            ShowInfoMessage($"O arquivo \"{fileName}.cpp\" já havia sido criado," +
+                $" e está sendo aberto, assim como a pasta em que está contido." +
+                $"\nVoce pode criar outro arquivo se quiser.");
+            System.Diagnostics.Process.Start($"{path}");
+        }
+
+        System.Diagnostics.Process.Start($"{path}/{fileName}.cpp");
     }
 
     public static void ReloadLevel()

@@ -59,76 +59,77 @@ public static class ExtLibControl
     private static void SeverResponse(object sender, string readValue) //responde ao recebimento de dados, lendo o que foi rescebido e criando açoes
     {
         string st = $"Recebido->{readValue}";
-        if (PersistentScript.IsPlaying) //ignora tudo se não tiver jogando
+
+
+        UserAction action = new UserAction();
+
+        var v = readValue.Split(' ');
+
+        int target = (v[1] == "R1") ? 1 : 0;
+        switch (v[0])
         {
-            UserAction action = new UserAction();
+            case "MOVE":
+                if (v.Length == 3)
+                {
+                    st = $"Movendo {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")} {float.Parse(v[2])} unidades";
 
-            var v = readValue.Split(' ');
+                    action = new UserAction("move", target, float.Parse(v[2]));
+                }
+                break;
+            case "ROTATE":
+                if (v.Length == 3)
+                {
+                    st = $"Rotacionando {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")} {float.Parse(v[2])} unidades";
 
-            switch (v[0])
-            {
-                case "MOVE":
-                    if (v.Length == 3)
-                    {
-                        st = $"Movendo {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")} {float.Parse(v[2])} unidades";
+                    action = new UserAction("rot", target, float.Parse(v[2]));
+                }
+                break;
+            case "PAUSE":
 
-                        action = new UserAction("move", (v[1] == "R1") ? 1 : 0, float.Parse(v[2]));
-                    }
-                    break;
-                case "ROTATE":
-                    if (v.Length == 3)
-                    {
-                        st = $"Rotacionando {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")} {float.Parse(v[2])} unidades";
+                st = $"Pausando...";
+                action = new UserAction("pause");
 
-                        action = new UserAction("rot", (v[1] == "R1") ? 1 : 0, float.Parse(v[2]));
-                    }
-                    break;
-                case "PAUSE":
+                break;
+            case "GARRA":
+                if (v.Length == 2)
+                {
+                    st = $"Agindo na garra do {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")}";
+                    action = new UserAction("garra", target);
+                }
+                break;
+            case "CAM"://não implementada
+                if (v.Length == 2)
+                {
+                    st = $"Alternando para camera {v[1]}";
+                    action = new UserAction("cam", -1, float.Parse(v[1]));
+                }
+                break;
+            case "WAIT"://não implementada
+                if (v.Length == 2)
+                {
+                    st = $"Segurando a fila por  {v[1]} segundos";
+                    action = new UserAction("hold", -1, float.Parse(v[1]));
+                }
+                break;
+            case "getTIME":
 
-                    st = $"Pausando...";
-                    action = new UserAction("pause");
+                action = new UserAction("getTIME");
 
-                    break;
-                case "GARRA":
-                    if (v.Length == 2)
-                    {
-                        st = $"Agindo na garra do {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")}";
-                        action = new UserAction("garra", (v[1] == "R1") ? 1 : 0);
-                    }
-                    break;
-                case "CAM"://não implementada
-                    if (v.Length == 2)
-                    {
-                        st = $"Alternando para camera {v[1]}";
-                        action = new UserAction("cam", -1, float.Parse(v[1]));
-                    }
-                    break;
-                case "WAIT"://não implementada
-                    if (v.Length == 2)
-                    {
-                        st = $"Segurando a fila por  {v[1]} segundos";
-                        action = new UserAction("hold", -1, float.Parse(v[1]));
-                    }
-                    break;
-                case "getTIME":
+                break;
+            case "RESTART":
+                Debug.Log("<color=#006666>Reiniciando mapa....</color>");
+                MenuManager_InGame.ReloadLevel();
+                break;
+            default:
+                break;
+        }
+        userActions.Enqueue(action);
 
-                    action = new UserAction("getTIME");
+        //Debug.Log($"{st}\n{userActions.Count} ações na fila");
 
-                    break;
-                case "RESTART":
-                    Debug.Log("<color=#006666>Reiniciando mapa....</color>");
-                    MenuManager_InGame.ReloadLevel();
-                    break;
-                default:
-                    break;
-            }
-            userActions.Enqueue(action);
+        //if (userActions.Count == 1) //encarrilha açoes
+        //    MoveActionQueue();
 
-            //Debug.Log($"{st}\n{userActions.Count} ações na fila");
-
-            //if (userActions.Count == 1) //encarrilha açoes
-            //    MoveActionQueue();
-        };
 
     }
 
@@ -136,7 +137,7 @@ public static class ExtLibControl
     {
         currentUAction = null; // quando pronta é nula
         MenuManager_InGame.UpdateTaskQueueList();
-        
+
     }
 
     public static void MoveActionQueue()//chama a proxima ação da fila
@@ -147,7 +148,8 @@ public static class ExtLibControl
             OnCommandCalled?.Invoke(null, usrAction); // a ação atual é a da frente na fila
             currentUAction = new UActionHolder { userAction = usrAction, t0 = Time.time, done = false };
         }
-        else{
+        else
+        {
             currentUAction = null;
         }
     }

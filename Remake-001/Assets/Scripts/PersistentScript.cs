@@ -16,7 +16,7 @@ public class PersistentScript : MonoBehaviour
     public static MapDisplayInfo currentMap;
     public static bool IsPlaying;
     public static bool canRunUserActions;
-    public static string incomingMessage;
+    public static string incomingMessage = "Welcome";
 
 
 
@@ -62,6 +62,28 @@ public class PersistentScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X))
             ExtLibControl.ClearActionQueue(); //Limpa todas as Ações
 
+        
+        float v = (Input.GetKeyDown(KeyCode.W)?1:Input.GetKeyDown(KeyCode.S)?-1:0);
+        if (v!=0)
+        {
+            ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("move", 0, .2f*v));
+        }
+        v = (Input.GetKeyDown(KeyCode.D) ? 1 : Input.GetKeyDown(KeyCode.A) ? -1 : 0);
+        if (v != 0)
+        {
+            ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("rot", 0, 15f * v));
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("garra", 0));
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("garra", 0));
+        }
+
+
         while (ExecuteOnMainThread.Count > 0)
         {
             ExecuteOnMainThread.Dequeue().Invoke();
@@ -69,12 +91,12 @@ public class PersistentScript : MonoBehaviour
         if (ExtLibControl.userActions.Count > 0)
         {
             bool cNull = (ExtLibControl.currentUAction == null);
-            if ((cNull ? true : ExtLibControl.currentUAction.done) && canRunUserActions)
+            if ((cNull ? true : ExtLibControl.currentUAction.done) && canRunUserActions && MenuManager_InGame.isPlaying)
             {
                 ExtLibControl.MoveActionQueue();
             }
 
-            if (cNull)
+            if (!cNull)
             {
                 var u = ExtLibControl.currentUAction.userAction;
                 if (u.type == "hold" && u.target == -1)
@@ -91,8 +113,11 @@ public class PersistentScript : MonoBehaviour
 
     private void OnGUI()
     {
-        //GUI.Label(new Rect(0, 30, Screen.width, Screen.height - 30),
-        //    $"<color=#000099> {ExtLibControl.currentUAction?.userAction.type}-{ExtLibControl.userActions.Count}\n\tActionDone:   {((ExtLibControl.currentUAction == null) ? true : ExtLibControl.currentUAction.done)}\n\tCanRun:   {canRunUserActions}</color>");
+        GUI.Label(new Rect(0, 30, Screen.width, Screen.height - 30),
+            $"<color=#000099> {ExtLibControl.currentUAction?.userAction.type}:{ExtLibControl.currentUAction?.userAction.value}/" +
+            $"-{ExtLibControl.userActions.Count}\n" +
+            $"\tActionDone:   {((ExtLibControl.currentUAction == null) ? true : ExtLibControl.currentUAction.done)}\n" +
+            $"\tCanRun:   {canRunUserActions}</color>");
     }
 
     private void OnApplicationQuit()
