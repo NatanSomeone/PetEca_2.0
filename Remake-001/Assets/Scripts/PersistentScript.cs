@@ -18,6 +18,8 @@ public class PersistentScript : MonoBehaviour
     public static bool canRunUserActions;
     public static string incomingMessage = "Welcome";
 
+    public float timescale = 1;
+
 
 
     private void Awake()
@@ -57,16 +59,17 @@ public class PersistentScript : MonoBehaviour
 
     void Update()
     {
+        Time.timeScale = timescale;
         if (Input.GetKeyDown(KeyCode.Z))
             ExtLibControl.DeQueueAction(); //Libera a ultima ação --para casos de encurralamento
         if (Input.GetKeyDown(KeyCode.X))
             ExtLibControl.ClearActionQueue(); //Limpa todas as Ações
 
-        
-        float v = (Input.GetKeyDown(KeyCode.W)?1:Input.GetKeyDown(KeyCode.S)?-1:0);
-        if (v!=0)
+
+        float v = (Input.GetKeyDown(KeyCode.W) ? 1 : Input.GetKeyDown(KeyCode.S) ? -1 : 0);
+        if (v != 0)
         {
-            ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("move", 0, .2f*v));
+            ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("move", 0, .2f * v));
         }
         v = (Input.GetKeyDown(KeyCode.D) ? 1 : Input.GetKeyDown(KeyCode.A) ? -1 : 0);
         if (v != 0)
@@ -80,7 +83,7 @@ public class PersistentScript : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("garra", 0));
+            ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("hold", -1, 3));
         }
 
 
@@ -88,20 +91,21 @@ public class PersistentScript : MonoBehaviour
         {
             ExecuteOnMainThread.Dequeue().Invoke();
         }
+
         if (ExtLibControl.userActions.Count > 0)
         {
-            bool cNull = (ExtLibControl.currentUAction == null);
-            if ((cNull ? true : ExtLibControl.currentUAction.done) && canRunUserActions && MenuManager_InGame.isPlaying)
+            if (((ExtLibControl.currentUAction == null) ? true : ExtLibControl.currentUAction.done) &&
+                canRunUserActions && MenuManager_InGame.isPlaying)
             {
                 ExtLibControl.MoveActionQueue();
             }
-
-            if (!cNull)
+            if (!(ExtLibControl.currentUAction == null))
             {
                 var u = ExtLibControl.currentUAction.userAction;
                 if (u.type == "hold" && u.target == -1)
                 {
-                    u.target = 1;
+                    Debug.Log($"Why?,Just, why?{u.target}");
+                    ExtLibControl.currentUAction.userAction.target = 1;
                     StartCoroutine(WaitAndDo(u.value, () => ExtLibControl.DeQueueAction()));
                 }
             }

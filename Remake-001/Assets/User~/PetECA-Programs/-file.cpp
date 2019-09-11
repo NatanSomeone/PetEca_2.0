@@ -7,10 +7,14 @@ int Main(){
 	cout<<"..."<<endl;Sleep(1000);
 
 		LOG = TRUE;
-			
+		Wait(1);	
+		Rotate(-90);
+		Move(1);
+		Rotate(90);
+		Move(1);
 		
 		Wait(5);	
-		for(int j=0;j<4;j++)
+		for(int j=0;j<100;j++)
 		{
 			Wait(2);
 			Move(3);
@@ -20,8 +24,10 @@ int Main(){
 				Claw();
 				Wait(1);
 				Claw();
+				Sleep(1000);
 			}
 			Rotate(-90);
+			Sleep(3500);
 		}
 		
 		DoLOOP= TRUE;

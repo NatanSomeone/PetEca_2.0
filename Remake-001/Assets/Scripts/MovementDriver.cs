@@ -25,7 +25,7 @@ public class MovementDriver : MonoBehaviour
         set
         {
             desiredDisplacement = Mathf.Abs(value);
-            if (desiredDisplacement <= 1E-8f)
+            if (desiredDisplacement <= 1E-5f)
             {
                 desiredDisplacement = vRotacao = vTranslacao = 0;
                 ExtLibControl.DeQueueAction();
@@ -93,16 +93,16 @@ public class MovementDriver : MonoBehaviour
             var a = Mathf.Sign(pAng - ang);
             //meshRend.SetBlendShapeWeight((a >= 0) ? 1 : 2, 100); //Girar rodinha
         }
-
-        var dspCorrection = (Mathf.Abs(DesiredDisplacement) < 0.1) ? Mathf.Abs(DesiredDisplacement) * 10 : 1;
+        //var delta = (realPosition - transform.position).magnitude;
+        var dspCorrection = (Mathf.Abs(DesiredDisplacement) < 0.2) ? Mathf.Abs(DesiredDisplacement) * 5 : 1;
         Vector3 displacement = (transform.forward * (vTranslacao * dspCorrection) * VelocidadeTranslacao * Time.fixedDeltaTime);
 
         if (vTranslacao != 0)
         {
-            DesiredDisplacement -= displacement.magnitude;
             rigidbodyRobo.MovePosition(rigidbodyRobo.position + displacement);
+            DesiredDisplacement -= displacement.magnitude;
         }
-        else if ((realPosition - transform.position).magnitude > 0.01f)
+        else if ((vRotacao == 0) && (realPosition - transform.position).magnitude > 0.01f) 
         {
             rigidbodyRobo.MovePosition(realPosition);
         }
@@ -152,6 +152,13 @@ public class MovementDriver : MonoBehaviour
         }
 
     }
+
+    private void LateUpdate()
+    {
+        
+    }
+
+
     Vector3 rotDelta;
 
     private void OnGUI()
@@ -160,13 +167,18 @@ public class MovementDriver : MonoBehaviour
         var angN = rigidbodyRobo.rotation.eulerAngles.y;
         var diff = Mathf.Abs(ang - angN);
         var dang = Mathf.Abs(Mathf.Min(diff, 360 - diff));
-        
+
 
         //var clawAngle = (Claw.localEulerAngles.x - 360)%360;
         //var clawControl = (clawState && clawAngle > -30) ? -1 : (!clawState && clawAngle < 0) ? 1 : 0;
         //GUI.Label(new Rect(0, 100, Screen.width, Screen.height - 100), $"<color=#000099>\n\n" +
         //$"Garra {((clawState)?"Levantada":"Abaixada")}\n" +
         //$"currentAngle:{clawAngle:F2}\t -{clawControl}" +
+        //$"</color>");
+
+        //GUI.Label(new Rect(0, 100, Screen.width, Screen.height - 100), $"<color=#000099>\n\n" +
+        //$"  deltaPos:{(realPosition - transform.position).magnitude}\n" +
+        //$"  DesiredDisp:{DesiredDisplacement}" +
         //$"</color>");
 
         //GUI.Label(new Rect(0, 100, Screen.width, Screen.height - 100),
