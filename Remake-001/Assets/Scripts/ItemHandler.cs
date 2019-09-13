@@ -8,7 +8,7 @@ public class ItemHandler : MonoBehaviour
 
     MovementDriver driver;
 
-    public Transform ItemCollection;
+    //public Transform ItemCollection;
     public Transform cageTransform;
     Transform ItemHeld;
     Transform triggObj;
@@ -37,7 +37,7 @@ public class ItemHandler : MonoBehaviour
                 else if (graping) //Item é Pego
                 {
                     var cageCenter = cageTransform.GetChild(0).transform.position;
-                    var c = new Vector3(cageCenter.x, .2f, cageCenter.z);
+                    var c = new Vector3(cageCenter.x, 0.04f, cageCenter.z);
 
                     triggObj.SetParent(cageTransform.GetChild(0));
                     triggObj.localPosition = Vector3.zero;
@@ -92,9 +92,9 @@ public class ItemHandler : MonoBehaviour
 
         if (driver.clawState && ItemHeld != null) //se gaiola levantada e item dentro dropa
         {
-            ItemHeld.SetParent(ItemCollection);
+            ItemHeld.SetParent(PersistentScript.persistentScript.ItemCollection);
             var p = ItemHeld.transform.position;
-            p = new Vector3(p.x, 0.1f, p.z);
+            p = new Vector3(p.x, 0.04f, p.z);
             ItemHeld.rotation = Quaternion.identity;
             ItemHeld = null;
         }

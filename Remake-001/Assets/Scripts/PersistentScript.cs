@@ -18,6 +18,9 @@ public class PersistentScript : MonoBehaviour
     public static bool canRunUserActions;
     public static string incomingMessage = "Welcome";
 
+
+    public Transform ItemCollection;
+
     public float timescale = 1;
 
 
@@ -53,6 +56,7 @@ public class PersistentScript : MonoBehaviour
 
     private void OnSceneChanged(Scene arg0, Scene arg1)
     {
+        ItemCollection = GameObject.Find("ItemCollection").transform;
         IsPlaying = FindObjectOfType<MenuManager_InGame>() != null;
         ExtLibControl.ClearActionQueue();
     }
@@ -104,7 +108,6 @@ public class PersistentScript : MonoBehaviour
                 var u = ExtLibControl.currentUAction.userAction;
                 if (u.type == "hold" && u.target == -1)
                 {
-                    Debug.Log($"Why?,Just, why?{u.target}");
                     ExtLibControl.currentUAction.userAction.target = 1;
                     StartCoroutine(WaitAndDo(u.value, () => ExtLibControl.DeQueueAction()));
                 }
@@ -117,11 +120,11 @@ public class PersistentScript : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(0, 30, Screen.width, Screen.height - 30),
-            $"<color=#000099> {ExtLibControl.currentUAction?.userAction.type}:{ExtLibControl.currentUAction?.userAction.value}/" +
-            $"-{ExtLibControl.userActions.Count}\n" +
-            $"\tActionDone:   {((ExtLibControl.currentUAction == null) ? true : ExtLibControl.currentUAction.done)}\n" +
-            $"\tCanRun:   {canRunUserActions}</color>");
+        //GUI.Label(new Rect(0, 30, Screen.width, Screen.height - 30),
+        //    $"<color=#000099> {ExtLibControl.currentUAction?.userAction.type}:{ExtLibControl.currentUAction?.userAction.value}/" +
+        //    $"-{ExtLibControl.userActions.Count}\n" +
+        //    $"\tActionDone:   {((ExtLibControl.currentUAction == null) ? true : ExtLibControl.currentUAction.done)}\n" +
+        //    $"\tCanRun:   {canRunUserActions}</color>");
     }
 
     private void OnApplicationQuit()
