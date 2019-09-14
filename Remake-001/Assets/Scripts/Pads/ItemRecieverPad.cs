@@ -17,6 +17,7 @@ public class ItemRecieverPad : MonoBehaviour
             Debug.Log($"Item Parent:{other.transform.parent.name}");
             if (other.transform.parent.name == "ItemCollection")
             {
+                PersistentScript.currentScore += Random.Range(1, 3);
                 Debug.Log("Item Entregue");
                 other.GetComponent<Item>().PadParent.SpawnItem();
                 Destroy(other.gameObject);

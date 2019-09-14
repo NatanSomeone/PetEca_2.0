@@ -17,6 +17,8 @@ public class PersistentScript : MonoBehaviour
     public static bool IsPlaying;
     public static bool canRunUserActions;
     public static string incomingMessage = "Welcome";
+    public static float timeT0;
+    public static float currentScore;
 
 
     public Transform ItemCollection;

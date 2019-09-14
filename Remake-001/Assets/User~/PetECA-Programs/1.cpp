@@ -18,7 +18,7 @@ int Main(){
 		Move(6.5);
 		Claw();
 		Wait(1);
-		for(int i =0 ; i<10; i++)
+		for(int i =0 ; i<50; i++)
 		{
 			Rotate(-180);
 			Move(5.75);

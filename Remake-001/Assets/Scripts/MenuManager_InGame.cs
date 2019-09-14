@@ -19,12 +19,15 @@ public class MenuManager_InGame : MonoBehaviour
     public TextMeshProUGUI MessageBoxText;
     public Button MessageBoxOkButton;
 
+    public TextMeshProUGUI TimeTextBox;
+    public TextMeshProUGUI ScoreTextBox;
+
     [HideInInspector] public static int tasksToDisp;
     //public static Transform TaskListGlobal;
     public static MenuManager_InGame instance;
     //Variaveis inerente ao mapa;
-    public static float score;
-    public static float timePassed;
+    //public static float score;
+    public static float timePassed => Time.time - PersistentScript.timeT0;
     public static bool isPlaying = false;//check if the game is not paused
 
 
@@ -68,6 +71,8 @@ public class MenuManager_InGame : MonoBehaviour
     {
         isPlaying = true;
         PersistentScript.canRunUserActions = true;
+        PersistentScript.currentScore = 0;
+        PersistentScript.timeT0 = 0;
 
         //starMessage
         //mudar para PersistentScript.currentMap.detailedDescription
@@ -90,7 +95,7 @@ public class MenuManager_InGame : MonoBehaviour
 
         isPlaying = !v;
         instance.FileMenu.parent.GetChild(1).gameObject.SetActive(v);
-        Time.timeScale = v ? 0 : 1;
+        Time.timeScale = v ? 0 : PersistentScript.persistentScript.timescale;
     }
 
     public static void ShowInfoMessage(string message)
@@ -190,6 +195,14 @@ public class MenuManager_InGame : MonoBehaviour
         Debug.Log($"<color=#000066>Waiting {time} seconds...</color>");
         yield return new WaitForSecondsRealtime(time);
         action();
+    }
+
+    private void Update()
+    {
+        if (isPlaying) PersistentScript.timeT0 += Time.deltaTime;
+        var t = PersistentScript.timeT0;
+        TimeTextBox.text = $"{((int)t / 60) % 60,4:00}{(((t / 2) % 2 == 0) ? " " : ":")}{((int)t % 60),2:00}";
+        ScoreTextBox.text = $"#{PersistentScript.currentScore,4:0000}";
     }
 
 }
