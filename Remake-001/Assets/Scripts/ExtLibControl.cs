@@ -60,29 +60,35 @@ public static class ExtLibControl
     {
         string st = $"Recebido->{readValue}";
 
-        Debug.Log(st);
+        //Debug.Log(st); DESCOMENTA
         UserAction action = new UserAction();
 
         var v = readValue.Split(' ');
 
-        
+                
         int target = (v.Length<0)?((v[1] == "R1") ? 1 : 0):0;
         switch (v[0])
         {
             case "MOVE":
                 if (v.Length == 3)
                 {
-                    st = $"Movendo {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")} {float.Parse(v[2])} unidades";
+                    float v2 = float.Parse(v[2]);
+                    if (v2 > 1e5) v2 *= 1e-9f;
 
-                    action = new UserAction("move", target, float.Parse(v[2]));
+                    st = $"Movendo {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")} {v2} unidades";
+
+                    action = new UserAction("move", target, v2);
                 }
                 break;
             case "ROTATE":
                 if (v.Length == 3)
                 {
-                    st = $"Rotacionando {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")} {float.Parse(v[2])} unidades";
+                    float v2 = float.Parse(v[2]);
+                    if (v2 > 1e5) v2 *= 1e-9f;
 
-                    action = new UserAction("rot", target, float.Parse(v[2]));
+                    st = $"Rotacionando {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")} {v2} unidades";
+
+                    action = new UserAction("rot", target, v2);
                 }
                 break;
             case "PAUSE":
@@ -102,7 +108,11 @@ public static class ExtLibControl
                 if (v.Length == 2)
                 {
                     st = $"Alternando para camera {v[1]}";
-                    action = new UserAction("cam", -1, float.Parse(v[1]));
+
+                    float v1 = float.Parse(v[1]);
+                    if (v1 > 1e5) v1 *= 1e-9f;
+
+                    action = new UserAction("cam", -1, v1);
 
                 }
                 break;
@@ -110,14 +120,20 @@ public static class ExtLibControl
                 if (v.Length == 2)
                 {
                     st = $"Segurando a fila por  {v[1]} segundos";
-                    action = new UserAction("hold", -1, float.Parse(v[1]));
+
+                    float v1 = float.Parse(v[1]);
+                    if (v1 > 1e5) v1 *= 1e-9f;
+                    action = new UserAction("hold", -1, v1);
                 }
                 break;
             case "SPEED"://não implementada
                 if (v.Length == 2)
                 {
                     st = $"timeScale => {v[1]} ";
-                    action = new UserAction("speed", -1, float.Parse(v[1]));
+
+                    float v1 = float.Parse(v[1]);
+                    if (v1 > 1e5) v1 *= 1e-9f;
+                    action = new UserAction("speed", -1, v1);
                 }
                 break;
             case "getTIME":

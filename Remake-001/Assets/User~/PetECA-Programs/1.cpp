@@ -9,7 +9,7 @@ int Main(){
 		LOG = TRUE;
 		
 		GameSpeed(6);
-		cout<<GetTime()<<(char)7;
+		//cout<<GetTime()<<(char)7;
 		CameraSel(0); //top view
 		Wait(5);
 		CameraSel(2); //car view
