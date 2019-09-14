@@ -4836,7 +4836,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: "Updates&cr\xE9ditos"
+  m_text: "Atualiza\xE7\xF5es&cr\xE9ditos"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 734811f9949eebc4092f650e9d4ed0ae, type: 2}
   m_sharedMaterial: {fileID: -1141906486198515234, guid: 734811f9949eebc4092f650e9d4ed0ae,
@@ -4906,7 +4906,7 @@ MonoBehaviour:
   m_margin: {x: 3, y: 12, z: 3, w: 12}
   m_textInfo:
     textComponent: {fileID: 915070258}
-    characterCount: 16
+    characterCount: 21
     spriteCount: 0
     spaceCount: 0
     wordCount: 2
@@ -5743,8 +5743,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 168.51367, y: 0}
-  m_SizeDelta: {x: 337.02734, y: 110.77}
+  m_AnchoredPosition: {x: 166.73802, y: 0}
+  m_SizeDelta: {x: 333.47604, y: 126.73}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1154481119
 MonoBehaviour:
@@ -5814,7 +5814,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.3
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 205
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -6670,8 +6670,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 168.51367, y: 0}
-  m_SizeDelta: {x: 337.02734, y: 78.85}
+  m_AnchoredPosition: {x: 166.73802, y: 0}
+  m_SizeDelta: {x: 333.47604, y: 78.85}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1262558636
 MonoBehaviour:
@@ -6974,7 +6974,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Play
+  m_text: Jogar
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -9407,8 +9407,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 168.51367, y: -23.465}
-  m_SizeDelta: {x: 337.02734, y: 46.93}
+  m_AnchoredPosition: {x: 166.73802, y: -23.465}
+  m_SizeDelta: {x: 333.47604, y: 46.93}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1979884267
 MonoBehaviour:
@@ -9476,7 +9476,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 62
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -9505,7 +9505,7 @@ MonoBehaviour:
     spaceCount: 11
     wordCount: 9
     linkCount: 0
-    lineCount: 2
+    lineCount: 3
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0

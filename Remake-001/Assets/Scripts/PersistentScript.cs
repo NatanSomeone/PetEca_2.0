@@ -155,7 +155,7 @@ public class PersistentScript : MonoBehaviour
 
     public IEnumerator WaitAndDo(float time, Action action)
     {
-        Debug.Log($"<color=#000066>Waiting {time} seconds...</color>");
+        //Debug.Log($"<color=#000066>Waiting {time} seconds...</color>");
         yield return new WaitForSecondsRealtime(time);
         action.Invoke();
     }

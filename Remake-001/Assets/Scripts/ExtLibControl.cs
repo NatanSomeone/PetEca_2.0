@@ -60,12 +60,13 @@ public static class ExtLibControl
     {
         string st = $"Recebido->{readValue}";
 
-
+        Debug.Log(st);
         UserAction action = new UserAction();
 
         var v = readValue.Split(' ');
 
-        int target = (v[1] == "R1") ? 1 : 0;
+        
+        int target = (v.Length<0)?((v[1] == "R1") ? 1 : 0):0;
         switch (v[0])
         {
             case "MOVE":

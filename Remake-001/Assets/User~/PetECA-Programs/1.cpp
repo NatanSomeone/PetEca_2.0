@@ -8,7 +8,8 @@ int Main(){
 
 		LOG = TRUE;
 		
-		//GameSpeed(6);
+		GameSpeed(6);
+		cout<<GetTime()<<(char)7;
 		CameraSel(0); //top view
 		Wait(5);
 		CameraSel(2); //car view
@@ -32,12 +33,15 @@ int Main(){
 			Claw();
 			Wait(0.2);	
 		}
-		CameraSel(1); //defautView
+		CameraSel(1); //defaultView
 		Claw();
 		Move(1.25);
 		Rotate(-90);
 		Move(7.75);
 		Rotate(-90);
+		GameSpeed(1);
+		Wait(5);
+		Restart();
 		
 		
 		DoLOOP= TRUE;

@@ -9,7 +9,7 @@ int Main(){
 		LOG = TRUE;
 			
 		Wait(5);
-	
+		//cout<<GetTime()<<(char)7;
 		for(int j=0;j<4;j++)
 		{
 			Wait(2);

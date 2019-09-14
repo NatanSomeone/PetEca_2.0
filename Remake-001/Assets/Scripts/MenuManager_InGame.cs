@@ -154,8 +154,8 @@ public class MenuManager_InGame : MonoBehaviour
         }
         else if (a.type == "getTIME")
         {
-            ExtLibControl.PServer2.SendMessage($"{timePassed}", ExtLibControl.PServer2.clientse);
-            Debug.Log($"<color=#00ff00>Time goted: time ={timePassed} seconds...</color>");
+            ExtLibControl.PServer2.SendMessage($"{PersistentScript.timeT0}", ExtLibControl.PServer2.clientse);
+            Debug.Log($"<color=#00ff00>Time goted: time ={PersistentScript.timeT0} seconds...</color>");
             ExtLibControl.DeQueueAction();
         }
 
