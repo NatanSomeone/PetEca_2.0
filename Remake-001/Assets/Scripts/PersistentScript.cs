@@ -22,6 +22,7 @@ public class PersistentScript : MonoBehaviour
 
 
     public Transform ItemCollection;
+    public Transform cameraHolder;
 
     public float timescale = 1;
 
@@ -59,6 +60,8 @@ public class PersistentScript : MonoBehaviour
     private void OnSceneChanged(Scene arg0, Scene arg1)
     {
         ItemCollection = GameObject.Find("ItemCollection").transform;
+        cameraHolder = GameObject.Find("Scene").transform.Find("Camera-holder");
+
         IsPlaying = FindObjectOfType<MenuManager_InGame>() != null;
         ExtLibControl.ClearActionQueue();
     }
@@ -113,7 +116,23 @@ public class PersistentScript : MonoBehaviour
                     ExtLibControl.currentUAction.userAction.target = 1;
                     StartCoroutine(WaitAndDo(u.value, () => ExtLibControl.DeQueueAction()));
                 }
+                if (u.type == "speed")
+                {
+                    timescale = u.value;
+                    ExtLibControl.DeQueueAction();
+                }
+                if (u.type == "cam" )
+                {
+                    if (u.value < cameraHolder.childCount)
+                        for (int i = 0; i < cameraHolder.childCount; i++)
+                        {
+                            cameraHolder.GetChild(i).gameObject.SetActive(i == u.value);
+                        }
+                        
+                    ExtLibControl.DeQueueAction();
+                }
             }
+
 
         }
 

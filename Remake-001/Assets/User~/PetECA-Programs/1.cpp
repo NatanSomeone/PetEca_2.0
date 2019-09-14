@@ -7,7 +7,11 @@ int Main(){
 	cout<<"..."<<endl;Sleep(1000);
 
 		LOG = TRUE;
-		Wait(1);	
+		
+		//GameSpeed(6);
+		CameraSel(0); //top view
+		Wait(5);
+		CameraSel(2); //car view
 		Rotate(-45);
 		float v= 7.4;
 		Claw();
@@ -18,7 +22,7 @@ int Main(){
 		Move(6.5);
 		Claw();
 		Wait(1);
-		for(int i =0 ; i<50; i++)
+		for(int i =0 ; i<15; i++)
 		{
 			Rotate(-180);
 			Move(5.75);
@@ -28,11 +32,13 @@ int Main(){
 			Claw();
 			Wait(0.2);	
 		}
+		CameraSel(1); //defautView
 		Claw();
 		Move(1.25);
 		Rotate(-90);
 		Move(7.75);
 		Rotate(-90);
+		
 		
 		DoLOOP= TRUE;
 		Finished= TRUE;		

@@ -102,6 +102,7 @@ public static class ExtLibControl
                 {
                     st = $"Alternando para camera {v[1]}";
                     action = new UserAction("cam", -1, float.Parse(v[1]));
+
                 }
                 break;
             case "WAIT"://não implementada
@@ -109,6 +110,13 @@ public static class ExtLibControl
                 {
                     st = $"Segurando a fila por  {v[1]} segundos";
                     action = new UserAction("hold", -1, float.Parse(v[1]));
+                }
+                break;
+            case "SPEED"://não implementada
+                if (v.Length == 2)
+                {
+                    st = $"timeScale => {v[1]} ";
+                    action = new UserAction("speed", -1, float.Parse(v[1]));
                 }
                 break;
             case "getTIME":

@@ -140,6 +140,11 @@ void Wait(float t){
 	W("WAIT %.9f", t);
 }
 
+void GameSpeed(float v){
+	v=(v>10)?10:(v<0)?0:v;
+	W("SPEED %.2f", v);
+}
+
 float GetTime(){
 	W("getTIME");
 	R(c);
