@@ -65,16 +65,15 @@ public static class ExtLibControl
 
         var v = readValue.Split(' ');
 
-                
-        int target = (v.Length<0)?((v[1] == "R1") ? 1 : 0):0;
+        System.Globalization.CultureInfo invariantCulture = System.Globalization.CultureInfo.InvariantCulture;
+
+        int target = (v.Length < 0) ? ((v[1] == "R1") ? 1 : 0) : 0;
         switch (v[0])
         {
             case "MOVE":
                 if (v.Length == 3)
                 {
-                    float v2 = float.Parse(v[2]);
-                    if (v2 > 1e5) v2 *= 1e-9f;
-
+                    float v2 = float.Parse(v[2], invariantCulture);
                     st = $"Movendo {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")} {v2} unidades";
 
                     action = new UserAction("move", target, v2);
@@ -83,9 +82,7 @@ public static class ExtLibControl
             case "ROTATE":
                 if (v.Length == 3)
                 {
-                    float v2 = float.Parse(v[2]);
-                    if (v2 > 1e5) v2 *= 1e-9f;
-
+                    float v2 = float.Parse(v[2], invariantCulture);
                     st = $"Rotacionando {((v[1] == "R0") ? "Robo Vermelho" : "Robo Azul")} {v2} unidades";
 
                     action = new UserAction("rot", target, v2);
@@ -109,11 +106,18 @@ public static class ExtLibControl
                 {
                     st = $"Alternando para camera {v[1]}";
 
-                    float v1 = float.Parse(v[1]);
-                    if (v1 > 1e5) v1 *= 1e-9f;
-
+                    float v1 = float.Parse(v[1], invariantCulture);
                     action = new UserAction("cam", -1, v1);
 
+                }
+                break;
+            case "WAITreal"://não implementada
+                if (v.Length == 2)
+                {
+                    st = $"Segurando a fila por  {v[1]} segundos";
+
+                    float v1 = float.Parse(v[1], invariantCulture);
+                    action = new UserAction("holdReal", -1, v1);
                 }
                 break;
             case "WAIT"://não implementada
@@ -121,8 +125,7 @@ public static class ExtLibControl
                 {
                     st = $"Segurando a fila por  {v[1]} segundos";
 
-                    float v1 = float.Parse(v[1]);
-                    if (v1 > 1e5) v1 *= 1e-9f;
+                    float v1 = float.Parse(v[1], invariantCulture);
                     action = new UserAction("hold", -1, v1);
                 }
                 break;
@@ -131,19 +134,33 @@ public static class ExtLibControl
                 {
                     st = $"timeScale => {v[1]} ";
 
-                    float v1 = float.Parse(v[1]);
-                    if (v1 > 1e5) v1 *= 1e-9f;
+                    float v1 = float.Parse(v[1], invariantCulture);
                     action = new UserAction("speed", -1, v1);
                 }
                 break;
+                //Feedback actions
             case "getTIME":
-
                 action = new UserAction("getTIME");
-
                 break;
+            case "getCameraCount":
+                action = new UserAction("getCameraCount");
+                break;
+            case "getScore":
+                action = new UserAction("getScore");
+                break;
+            case "testSensor":
+                 if (v.Length == 3)
+                {
+                    int v2 = int.Parse(v[2], invariantCulture);
+                    st = $"Testando sensor {v2}";
+                    action = new UserAction("testSensor", target, v2);
+                }
+                break;
+                //****
             case "RESTART":
                 Debug.Log("<color=#006666>Reiniciando mapa....</color>");
-                MenuManager_InGame.ReloadLevel();
+                action = new UserAction("restart");
+                //MenuManager_InGame.ReloadLevel();
                 break;
             default:
                 break;

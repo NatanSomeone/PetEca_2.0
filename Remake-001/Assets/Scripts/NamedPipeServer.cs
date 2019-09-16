@@ -63,7 +63,6 @@ public class NamedPipeServer
 
         while (true)
         {
-
             clientHandle = CreateNamedPipe(this.pipeName, DUPLEX | FILE_FLAG_OVERLAPPED, 0, 255, BUFFER_SIZE, BUFFER_SIZE, 0, IntPtr.Zero);
 
             //could not create named pipe
@@ -163,12 +162,13 @@ public class NamedPipeServer
     {
 
         ASCIIEncoding encoder = new ASCIIEncoding();
+        message += "\0";
         byte[] messageBuffer = encoder.GetBytes(message);
 
         if (client.stream.CanWrite)
         {
+            //Debug.Log($"mesage({messageBuffer.Length}): {message}");
             client.stream.Write(messageBuffer, 0, messageBuffer.Length);
-            Debug.Log($"mesage({messageBuffer.Length}): {message}");
             client.stream.Flush();
         }
 

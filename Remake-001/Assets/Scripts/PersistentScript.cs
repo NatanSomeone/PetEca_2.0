@@ -25,8 +25,7 @@ public class PersistentScript : MonoBehaviour
     public Transform cameraHolder;
 
     public float timescale = 1;
-
-
+    private float holdTime;
 
     private void Awake()
     {
@@ -59,11 +58,10 @@ public class PersistentScript : MonoBehaviour
 
     private void OnSceneChanged(Scene arg0, Scene arg1)
     {
-        ItemCollection = GameObject.Find("ItemCollection").transform;
-        cameraHolder = GameObject.Find("Scene").transform.Find("Camera-holder");
+        ItemCollection = GameObject.Find("ItemCollection")?.transform;
+        cameraHolder = GameObject.Find("Scene")?.transform.Find("Camera-holder");
 
         IsPlaying = FindObjectOfType<MenuManager_InGame>() != null;
-        ExtLibControl.ClearActionQueue();
     }
 
     void Update()
@@ -95,6 +93,11 @@ public class PersistentScript : MonoBehaviour
             ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("hold", -1, 3));
         }
 
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("getTIME"));
+        }
+
 
         while (ExecuteOnMainThread.Count > 0)
         {
@@ -108,28 +111,59 @@ public class PersistentScript : MonoBehaviour
             {
                 ExtLibControl.MoveActionQueue();
             }
-            if (!(ExtLibControl.currentUAction == null))
+
+            if (!(ExtLibControl.currentUAction == null) && canRunUserActions && MenuManager_InGame.isPlaying)
             {
                 var u = ExtLibControl.currentUAction.userAction;
-                if (u.type == "hold" && u.target == -1)
+                switch (u.type)
                 {
-                    ExtLibControl.currentUAction.userAction.target = 1;
-                    StartCoroutine(WaitAndDo(u.value, () => ExtLibControl.DeQueueAction()));
-                }
-                if (u.type == "speed")
-                {
-                    timescale = u.value;
-                    ExtLibControl.DeQueueAction();
-                }
-                if (u.type == "cam" )
-                {
-                    if (u.value < cameraHolder.childCount)
-                        for (int i = 0; i < cameraHolder.childCount; i++)
+                    case "holdReal" when u.target == -1:
+                        ExtLibControl.currentUAction.userAction.target = 1;
+                        StartCoroutine(WaitAndDo(u.value, () => ExtLibControl.DeQueueAction()));
+                        break;
+                    case "hold":
+                        if (u.target == -1)
                         {
-                            cameraHolder.GetChild(i).gameObject.SetActive(i == u.value);
+                            ExtLibControl.currentUAction.userAction.target = 1;
+                            holdTime = timeT0 + u.value;
                         }
-                        
-                    ExtLibControl.DeQueueAction();
+                        else if (holdTime - timeT0 < 1e-8)
+                        {
+                            ExtLibControl.DeQueueAction();
+                        }
+                        break;
+                    case "restart" when u.target == -1:
+                        ExtLibControl.currentUAction.userAction.target = 1;
+                        MenuManager_InGame.ReloadLevel();
+                        break;
+                    case "speed":
+                        timescale = u.value;
+                        ExtLibControl.DeQueueAction();
+                        break;
+                    case "cam":
+                        {
+                            if (u.value < cameraHolder.childCount)
+                                for (int i = 0; i < cameraHolder.childCount; i++)
+                                {
+                                    cameraHolder.GetChild(i).gameObject.SetActive(i == u.value);
+                                }
+
+                            ExtLibControl.DeQueueAction();
+                            break;
+                        }
+                }
+                //feedback ActionsBehaviours
+                switch (u.type)
+                {
+                    case "getTIME":
+                        PipeFeedback(timeT0);
+                        break;
+                    case "getCameraCount":
+                        PipeFeedback(cameraHolder.childCount);
+                        break;
+                    case "getScore":
+                        PipeFeedback((int)currentScore);
+                        break;                    
                 }
             }
 
@@ -139,13 +173,21 @@ public class PersistentScript : MonoBehaviour
 
     }
 
+    public static void PipeFeedback(float value)
+    {
+        ExtLibControl.PServer2.SendMessage($"{value}", ExtLibControl.PServer2.clientse);
+        ExtLibControl.DeQueueAction();
+    }
+
     private void OnGUI()
     {
-        //GUI.Label(new Rect(0, 30, Screen.width, Screen.height - 30),
-        //    $"<color=#000099> {ExtLibControl.currentUAction?.userAction.type}:{ExtLibControl.currentUAction?.userAction.value}/" +
-        //    $"-{ExtLibControl.userActions.Count}\n" +
-        //    $"\tActionDone:   {((ExtLibControl.currentUAction == null) ? true : ExtLibControl.currentUAction.done)}\n" +
-        //    $"\tCanRun:   {canRunUserActions}</color>");
+        GUI.Label(new Rect(0, 30, Screen.width, Screen.height - 30),
+            $"<color=#000099>" +
+            $"\n\n{ExtLibControl.PServer2.clientse?.stream.CanWrite}" +
+            $" {ExtLibControl.currentUAction?.userAction.type}:{ExtLibControl.currentUAction?.userAction.value}/" +
+            $"-{ExtLibControl.userActions.Count}\n" +
+            $"\tActionDone:   {((ExtLibControl.currentUAction == null) ? true : ExtLibControl.currentUAction.done)}\n" +
+            $"\tCanRun:   {canRunUserActions}</color>");
     }
 
     private void OnApplicationQuit()

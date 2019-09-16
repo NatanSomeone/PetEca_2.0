@@ -5,11 +5,17 @@ int Main(){
 	
 	cout<<"Hi, welcome the emulation is starting now."<<endl;
 	cout<<"..."<<endl;Sleep(1000);
-
-		LOG = TRUE;
+	float t0;	
+		SelRobot(0);
 		
-		GameSpeed(6);
-		//cout<<GetTime()<<(char)7;
+		LOG = true;
+		GameSpeed(16);
+		Restart();
+//		while(TestSensor(0)==0){
+//			Move(0.2);
+//		}
+		
+		t0 = GetTime(); //InitialTime
 		CameraSel(0); //top view
 		Wait(5);
 		CameraSel(2); //car view
@@ -39,8 +45,9 @@ int Main(){
 		Rotate(-90);
 		Move(7.75);
 		Rotate(-90);
-		GameSpeed(1);
-		Wait(5);
+		GameSpeed(1);	
+		Wait(1);
+		cout<<"It lasted "<<GetTime()-t0<<" seconds , and was earned "<<GetScore()<<" points"<<endl;
 		Restart();
 		
 		

@@ -103,17 +103,17 @@ public class ItemHandler : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        var r = 0.15f;
-        var cageCenter = cageTransform.GetComponent<Collider>().bounds.center;
-        var c = new Vector3(cageCenter.x, r + 1, cageCenter.z);
+        //var r = 0.15f;
+        //var cageCenter = cageTransform.GetComponent<Collider>().bounds.center;
+        //var c = new Vector3(cageCenter.x, r + 1, cageCenter.z);
 
-        Gizmos.color = (ItemHeld == null) ? Color.red : Color.green;
+        //Gizmos.color = (ItemHeld == null) ? Color.red : Color.green;
 
-        Gizmos.DrawSphere(c, r);
-        Gizmos.DrawRay(c, transform.forward * .6f);
+        //Gizmos.DrawSphere(c, r);
+        //Gizmos.DrawRay(c, transform.forward * .6f);
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawRay(c+transform.forward*0.6f, transform.forward*0.6f+dir * .6f);
+        //Gizmos.color = Color.blue;
+        //Gizmos.DrawRay(c+transform.forward*0.6f, transform.forward*0.6f+dir * .6f);
     }
 
 }

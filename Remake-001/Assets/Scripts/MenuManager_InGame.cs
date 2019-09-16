@@ -74,6 +74,13 @@ public class MenuManager_InGame : MonoBehaviour
         PersistentScript.currentScore = 0;
         PersistentScript.timeT0 = 0;
 
+
+        if (ExtLibControl.currentUAction?.userAction.type == "restart")
+            ExtLibControl.DeQueueAction();
+        else
+            ExtLibControl.ClearActionQueue();
+
+
         //starMessage
         //mudar para PersistentScript.currentMap.detailedDescription
         if (PersistentScript.incomingMessage == "Welcome")
@@ -86,6 +93,8 @@ public class MenuManager_InGame : MonoBehaviour
         {
             ShowInfoMessage(PersistentScript.incomingMessage);
         }
+
+
     }
 
     public static void PauseLevel(bool v)//TODO verificar...
@@ -138,7 +147,7 @@ public class MenuManager_InGame : MonoBehaviour
         PersistentScript.ExecuteOnMainThread.Enqueue(delegate
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            ExtLibControl.ClearActionQueue();
+            
         });
     }
 
@@ -152,13 +161,6 @@ public class MenuManager_InGame : MonoBehaviour
             Debug.Log("<color=#006666>Pausing....</color>");
             ExtLibControl.DeQueueAction();
         }
-        else if (a.type == "getTIME")
-        {
-            ExtLibControl.PServer2.SendMessage($"{PersistentScript.timeT0}", ExtLibControl.PServer2.clientse);
-            Debug.Log($"<color=#00ff00>Time goted: time ={PersistentScript.timeT0} seconds...</color>");
-            ExtLibControl.DeQueueAction();
-        }
-
     }
 
     public static void UpdateTaskQueueList()

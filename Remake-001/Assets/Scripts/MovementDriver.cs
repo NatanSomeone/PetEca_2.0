@@ -11,6 +11,7 @@ public class MovementDriver : MonoBehaviour
     public float VelocidadedaGarra = 25;
 
     public Transform Claw;
+    public Transform Sensors;
 
     private Rigidbody rigidbodyRobo;
     //private SkinnedMeshRenderer meshRend;
@@ -56,26 +57,30 @@ public class MovementDriver : MonoBehaviour
     {
         if (a.target == RobotType) //target == BlueBot
         {
-            if (a.type == "move") //type == Movement
+            switch (a.type) //type == Movement
             {
-                vTranslacao = Mathf.Sign(a.value);
-                DesiredDisplacement = a.value;
+                case "move":
+                    vTranslacao = Mathf.Sign(a.value);
+                    DesiredDisplacement = a.value;
 
-                realPosition += fwdPosition * Mathf.Abs(desiredDisplacement) * vTranslacao;
-            }
-            else if (a.type == "rot") //type == rotation
-            {
-                ang = -2;
-                vRotacao = Mathf.Sign(a.value);
-                float d = a.value % 360; d = (d > 0) ? d : d + 360;
-                desiredDisplacement = d;
+                    realPosition += fwdPosition * Mathf.Abs(desiredDisplacement) * vTranslacao;
+                    break;
+                case "rot":
+                    {
+                        ang = -2;
+                        vRotacao = Mathf.Sign(a.value);
+                        float d = a.value % 360; d = (d > 0) ? d : d + 360;
+                        desiredDisplacement = d;
 
-                tRotation = nAng(tRotation + d);
-            }
-            else if (a.type == "garra")
-            {
-                clawState = !clawState;
-                clawInAction = true;
+                        tRotation = nAng(tRotation + d);
+                        break;
+                    }
+
+                case "garra":
+                    clawState = !clawState;
+                    clawInAction = true;
+                    break;
+
             }
         }
     }
@@ -102,7 +107,7 @@ public class MovementDriver : MonoBehaviour
             rigidbodyRobo.MovePosition(rigidbodyRobo.position + displacement);
             DesiredDisplacement -= displacement.magnitude;
         }
-        else if ((vRotacao == 0) && (realPosition - transform.position).magnitude > 0.01f) 
+        else if ((vRotacao == 0) && (realPosition - transform.position).magnitude > 0.01f)
         {
             rigidbodyRobo.MovePosition(realPosition);
         }
@@ -135,12 +140,12 @@ public class MovementDriver : MonoBehaviour
         {
 
 
-            var clawAngle = (Claw.localEulerAngles.x - 360)%360;
+            var clawAngle = (Claw.localEulerAngles.x - 360) % 360;
             var clawControl = (clawState && clawAngle > -30) ? -1 : (!clawState && clawAngle < 0) ? 1 : 0;
             if (clawControl != 0)
             {
                 Claw.localEulerAngles = Vector3.right *
-                    Mathf.Clamp(clawAngle + (clawControl * Time.deltaTime * VelocidadedaGarra*10),
+                    Mathf.Clamp(clawAngle + (clawControl * Time.deltaTime * VelocidadedaGarra * 10),
                     -30, 0);
             }
             else
@@ -148,14 +153,38 @@ public class MovementDriver : MonoBehaviour
                 clawInAction = false;
                 ExtLibControl.DeQueueAction();
             }
-            
+
         }
+
+        if (ExtLibControl.currentUAction != null  && PersistentScript.canRunUserActions && MenuManager_InGame.isPlaying)
+        {
+            var u = ExtLibControl.currentUAction.userAction;
+
+            if (u.type == "testSensor")
+            {
+
+                Debug.Log(u.value);
+                if (u.value < Sensors.childCount)
+                {
+                    var t = Sensors.GetChild((int)u.value);
+                    var p = t.position;
+                    var ray = new Ray(p, t.forward * 0.5f);
+                    var hit = Physics.Raycast(ray, 0.6f, LayerMask.GetMask("wall"));
+                    PersistentScript.PipeFeedback((hit) ? 1 : 0);
+                }
+                else
+                {
+                    PersistentScript.PipeFeedback(-1);
+                }
+            }
+        }
+
 
     }
 
     private void LateUpdate()
     {
-        
+
     }
 
 
@@ -187,6 +216,28 @@ public class MovementDriver : MonoBehaviour
         //    $"\nReal:{realPosition}\t" +
         //    $"Delta:{(realPosition - transform.position).magnitude:F5}\n" +
         //    $"Dang{dang}\tDiff{diff}</color>");
+
+    }
+
+    private void OnDrawGizmos()
+    {
+        var r = 0.03f;
+        var d = 0.5f;
+
+        for (int i = 0; i < Sensors?.childCount; i++)
+        {
+            var t = Sensors.GetChild(i);
+            var p = t.position;
+            var ray = new Ray(p, t.forward * d);
+            var hit = Physics.Raycast(ray, 1, LayerMask.GetMask("wall"));
+
+            Gizmos.color = (hit) ? Color.red : Color.blue;
+            Gizmos.DrawSphere(p, r);
+            Gizmos.DrawRay(ray);
+
+
+        }
+
 
     }
 
