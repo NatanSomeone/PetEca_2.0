@@ -6,9 +6,11 @@ using UnityEngine;
 public class ItemSpawnerPad : MonoBehaviour
 {
     public GameObject Item;
+    public int MaxSpawn;
 
     private void Start()
     {
+        if (PersistentScript.playType == 1) { PersistentScript.currentScore+= MaxSpawn; }
         SpawnItem();
     }
 

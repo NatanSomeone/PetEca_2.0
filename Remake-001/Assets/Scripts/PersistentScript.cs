@@ -19,13 +19,17 @@ public class PersistentScript : MonoBehaviour
     public static string incomingMessage = "Welcome";
     public static float timeT0;
     public static float currentScore;
+    public static int playType;//0_By-score * 1_By-time
 
-
+    public AudioClip clickClip;
     public Transform ItemCollection;
     public Transform cameraHolder;
 
     public float timescale = 1;
     private float holdTime;
+    private int currentCamera;
+
+    public static void ClickSfx() => AudioSource.PlayClipAtPoint(persistentScript?.clickClip, new Vector3(5, 1, 2));
 
     private void Awake()
     {
@@ -58,9 +62,6 @@ public class PersistentScript : MonoBehaviour
 
     private void OnSceneChanged(Scene arg0, Scene arg1)
     {
-        ItemCollection = GameObject.Find("ItemCollection")?.transform;
-        cameraHolder = GameObject.Find("Scene")?.transform.Find("Camera-holder");
-
         IsPlaying = FindObjectOfType<MenuManager_InGame>() != null;
     }
 
@@ -96,6 +97,11 @@ public class PersistentScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("getTIME"));
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            currentCamera = (currentCamera + 1) % cameraHolder.childCount;
+            ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("cam", -1, currentCamera));
         }
 
 
@@ -181,13 +187,13 @@ public class PersistentScript : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(0, 30, Screen.width, Screen.height - 30),
-            $"<color=#000099>" +
-            $"\n\n{ExtLibControl.PServer2.clientse?.stream.CanWrite}" +
-            $" {ExtLibControl.currentUAction?.userAction.type}:{ExtLibControl.currentUAction?.userAction.value}/" +
-            $"-{ExtLibControl.userActions.Count}\n" +
-            $"\tActionDone:   {((ExtLibControl.currentUAction == null) ? true : ExtLibControl.currentUAction.done)}\n" +
-            $"\tCanRun:   {canRunUserActions}</color>");
+        //GUI.Label(new Rect(0, 30, Screen.width, Screen.height - 30),
+        //    $"<color=#000099>" +
+        //    $"\n\n{ExtLibControl.PServer2.clientse?.stream.CanWrite}" +
+        //    $" {ExtLibControl.currentUAction?.userAction.type}:{ExtLibControl.currentUAction?.userAction.value}/" +
+        //    $"-{ExtLibControl.userActions.Count}\n" +
+        //    $"\tActionDone:   {((ExtLibControl.currentUAction == null) ? true : ExtLibControl.currentUAction.done)}\n" +
+        //    $"\tCanRun:   {canRunUserActions}</color>");
     }
 
     private void OnApplicationQuit()

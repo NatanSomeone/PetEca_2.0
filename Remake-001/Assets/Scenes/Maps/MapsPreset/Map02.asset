@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f299e827d7641e543b4e9c1c45194843, type: 3}
+  m_Name: Map02
+  m_EditorClassIdentifier: 
+  icon: {fileID: 21300000, guid: ddfe13ec57704fb4eb16d98a95252ee9, type: 3}
+  scene: 1
+  description: Primeira aventura
+  longDescription: 
+  MapPrefab: {fileID: 2573564619376972756, guid: 2f89d70e5eb18ea498d60a0d87aedcfd,
+    type: 3}

@@ -21,6 +21,7 @@ public class MenuManager_InGame : MonoBehaviour
 
     public TextMeshProUGUI TimeTextBox;
     public TextMeshProUGUI ScoreTextBox;
+    public AudioClip[] clips;
 
     [HideInInspector] public static int tasksToDisp;
     //public static Transform TaskListGlobal;
@@ -29,7 +30,7 @@ public class MenuManager_InGame : MonoBehaviour
     //public static float score;
     public static float timePassed => Time.time - PersistentScript.timeT0;
     public static bool isPlaying = false;//check if the game is not paused
-
+    public static int totalItens;
 
     private void Awake()
     {
@@ -41,40 +42,51 @@ public class MenuManager_InGame : MonoBehaviour
 
 
         TaskQueueList.parent.GetComponent<Toggle>().onValueChanged
-            .AddListener(v => { TaskQueueList.gameObject.SetActive(v); if (v) UpdateTaskQueueList(); });
+            .AddListener(v => { TaskQueueList.gameObject.SetActive(v); if (v) UpdateTaskQueueList(); });    //tasklist
 
         FileMenuContent = FileMenu.GetChild(0).GetChild(0);
 
         FileMenu.GetComponentInChildren<TextMeshProUGUI>().text = PersistentScript.currentMap?.name + "-Menu";
         FileMenu.GetComponent<Toggle>().onValueChanged                      //FileMenuButton
-            .AddListener(v => { FileMenuContent.gameObject.SetActive(v); });
+            .AddListener(v => { PersistentScript.ClickSfx(); FileMenuContent.gameObject.SetActive(v); });
 
         FileMenuContent.GetChild(0).GetComponent<Toggle>().onValueChanged   //PauseButton
-            .AddListener(v => { PauseLevel(v); });
+            .AddListener(v => { PersistentScript.ClickSfx(); PauseLevel(v); });
 
         FileMenuContent.GetChild(1).GetComponent<Toggle>().onValueChanged   //RestartButton
-            .AddListener(v => { ReloadLevel(); });
+            .AddListener(v => { PersistentScript.ClickSfx(); ReloadLevel(); });
 
         FileMenuContent.GetChild(2).GetComponent<Toggle>().onValueChanged   //NewFileButton
-            .AddListener(v => { NewFile(); });
+            .AddListener(v => { PersistentScript.ClickSfx(); NewFile(); });
 
         FileMenuContent.GetChild(3).GetComponent<Toggle>().onValueChanged   //MainMenuButton
-            .AddListener(delegate { SceneManager.LoadScene(0); PersistentScript.currentMap = null; });
+            .AddListener(delegate { PersistentScript.ClickSfx(); SceneManager.LoadScene(0); PersistentScript.currentMap = null; });
 
         //MessageBox
-        MessageBoxOkButton.onClick.AddListener(delegate { MessageBox.gameObject.SetActive(false); PauseLevel(false); });
+        MessageBoxOkButton.onClick.AddListener(delegate { PersistentScript.ClickSfx(); MessageBox.gameObject.SetActive(false); PauseLevel(false); });
 
-        
-        
+
+
     }
     private void Start()
     {
         isPlaying = true;
         PersistentScript.canRunUserActions = true;
-        PersistentScript.currentScore = 0;
-        PersistentScript.timeT0 = 0;
+        PersistentScript.currentScore = (PersistentScript.playType == 0) ? 0 : totalItens;
+        PersistentScript.timeT0 = (PersistentScript.playType == 0) ? 90.4f : 0;
+        var audioS = GetComponent<AudioSource>();
 
+        ScoreTextBox.GetComponentInParent<TextMeshProUGUI>().text = (PersistentScript.playType == 0) ? "Pontuação:" : "Restantes:";
 
+        Instantiate(PersistentScript.currentMap.MapPrefab);
+        PersistentScript.persistentScript.ItemCollection = GameObject.Find("ItemCollection")?.transform;
+        PersistentScript.persistentScript.cameraHolder = GameObject.Find("Camera-holder").transform;
+
+        if (clips.Length > 0)
+        {
+            audioS.clip = clips[UnityEngine.Random.Range(0, clips.Length)];
+            audioS.Play();
+        }
         if (ExtLibControl.currentUAction?.userAction.type == "restart")
             ExtLibControl.DeQueueAction();
         else
@@ -107,8 +119,13 @@ public class MenuManager_InGame : MonoBehaviour
         Time.timeScale = v ? 0 : PersistentScript.persistentScript.timescale;
     }
 
-    public static void ShowInfoMessage(string message)
+    public static void ShowInfoMessage(string message, bool restart = false)
     {
+        if (restart)
+        {
+            PersistentScript.incomingMessage = message;
+            ReloadLevel(); return;
+        }
         instance.MessageBoxText.text = message;
         instance.MessageBox.gameObject.SetActive(true);
         PauseLevel(true);
@@ -131,7 +148,8 @@ public class MenuManager_InGame : MonoBehaviour
         if (!File.Exists($"{path}/{fileName}.cpp"))
         {
             File.Copy(Application.dataPath + "/Resources/Libraries~/MasterExample.cpp", $"{path}/{fileName}.cpp", false);
-        }else
+        }
+        else
         {
             ShowInfoMessage($"O arquivo \"{fileName}.cpp\" já havia sido criado," +
                 $" e está sendo aberto, assim como a pasta em que está contido." +
@@ -147,7 +165,7 @@ public class MenuManager_InGame : MonoBehaviour
         PersistentScript.ExecuteOnMainThread.Enqueue(delegate
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            
+
         });
     }
 
@@ -201,10 +219,14 @@ public class MenuManager_InGame : MonoBehaviour
 
     private void Update()
     {
-        if (isPlaying) PersistentScript.timeT0 += Time.deltaTime;
         var t = PersistentScript.timeT0;
+        var score = PersistentScript.currentScore;
+
+        if (isPlaying) PersistentScript.timeT0 += ((PersistentScript.playType == 0) ? (t > -0.5f) ? -1 : 0 : 1) * Time.deltaTime;
+        if (t < 0) { ShowInfoMessage($"Time is UP, you goted {score} point{((score == 1) ? "" : "s")}", true); }
+
         TimeTextBox.text = $"{((int)t / 60) % 60,4:00}{(((t / 2) % 2 == 0) ? " " : ":")}{((int)t % 60),2:00}";
-        ScoreTextBox.text = $"#{PersistentScript.currentScore,4:0000}";
+        ScoreTextBox.text = $"#{score,4:0000}";
     }
 
 }
