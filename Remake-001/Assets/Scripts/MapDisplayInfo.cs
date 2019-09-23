@@ -11,5 +11,6 @@ public class MapDisplayInfo : ScriptableObject
     public string description;
     public string longDescription;
     public GameObject MapPrefab;
+    public float maxTime;
 
 }

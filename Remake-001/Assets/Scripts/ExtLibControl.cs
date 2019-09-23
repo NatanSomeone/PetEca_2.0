@@ -158,7 +158,7 @@ public static class ExtLibControl
                 break;
                 //****
             case "RESTART":
-                Debug.Log("<color=#006666>Reiniciando mapa....</color>");
+                //Debug.Log("<color=#006666>Reiniciando mapa....</color>");
                 action = new UserAction("restart");
                 //MenuManager_InGame.ReloadLevel();
                 break;

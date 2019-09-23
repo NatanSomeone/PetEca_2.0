@@ -9,7 +9,7 @@ int Main(){
 		SelRobot(0);
 		
 		LOG = true;
-		GameSpeed(16);
+		GameSpeed(10);
 		Restart();
 //		while(TestSensor(0)==0){
 //			Move(0.2);
@@ -47,8 +47,8 @@ int Main(){
 		Rotate(-90);
 		GameSpeed(1);	
 		Wait(1);
-		cout<<"It lasted "<<GetTime()-t0<<" seconds , and was earned "<<GetScore()<<" points"<<endl;
-		Restart();
+//		cout<<"It lasted "<<GetTime()-t0<<" seconds , and was earned "<<GetScore()<<" points"<<endl;
+//		Restart();
 		
 		
 		DoLOOP= TRUE;

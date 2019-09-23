@@ -24,7 +24,9 @@ public class ItemRecieverPad : MonoBehaviour
 
 
                 if (PersistentScript.playType == 1 && PersistentScript.currentScore == 0)
-                { MenuManager_InGame.ShowInfoMessage($"Congrats ,  you got all the itens in {PersistentScript.timeT0}",true); }
+                {
+                    MenuManager_InGame.ShowGOverMessage((int)(1000f / PersistentScript.timeT0));
+                        /*MenuManager_InGame.ShowInfoMessage($"Congrats ,  you got all the itens in {PersistentScript.timeT0}",true);*/ }
             }
         }
 

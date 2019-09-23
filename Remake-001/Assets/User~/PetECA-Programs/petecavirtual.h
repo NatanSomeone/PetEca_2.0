@@ -110,6 +110,9 @@ unsigned long __stdcall NET_RvThr(void * pParam) {
 		if(fSuccess){
 			strcpy(editor::chBuf, c);
 			editor::WaitingForMsg=FALSE;
+			if (strcmp(editor::chBuf, "CLEARED") == 0){
+			Finished = TRUE;std::cout<<"Comandos Limpados na aplicação";
+			}
 		}/*editor::chBuf Recieved*/
 		if (! fSuccess && GetLastError() != ERROR_MORE_DATA) 
 		{
@@ -161,9 +164,9 @@ namespace {//editing area
 		//	a*=0.0174532925;
 		W("ROTATE R%d %.9f", ed::sRob, a);
 	}
-	void Pause() {
-		W("PAUSE");
-	}
+//	void Pause() {
+//		W("PAUSE");
+//	}
 	void Claw() {
 		W("GARRA R%d", ed::sRob);
 	}

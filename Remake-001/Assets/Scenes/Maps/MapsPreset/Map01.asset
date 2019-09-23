@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 21300000, guid: e6b096152b67bdb47a7493adb25c78a2, type: 3}
   scene: 1
-  description: "\u02E0uim mapa introdut\U000F3AEF\xF3rio para pratica dos comandos."
+  description: "Um mapa introdut\xF3rio para pr\xE1tica dos comandos."
   longDescription: "Bem vindo ao primeiro mapa, aqui sua aventura come\xE7a, primeiramente
     v\xE1 em {Map01-Menu/ NovoArquivoCpp} escreva seu programa e copile. \tO programa
     deve ser capaz de direcionar o Robo ao quadro espa\xE7o amarelo, coletar seus
@@ -22,3 +22,4 @@ MonoBehaviour:
     de itens;"
   MapPrefab: {fileID: 2108698832261221708, guid: 9cd545fe4822a554491191ea2bb8bcd8,
     type: 3}
+  maxTime: 90

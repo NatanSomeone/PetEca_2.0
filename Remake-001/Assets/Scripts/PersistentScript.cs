@@ -19,6 +19,7 @@ public class PersistentScript : MonoBehaviour
     public static string incomingMessage = "Welcome";
     public static float timeT0;
     public static float currentScore;
+    public static int lastScore;
     public static int playType;//0_By-score * 1_By-time
 
     public AudioClip clickClip;
@@ -34,7 +35,7 @@ public class PersistentScript : MonoBehaviour
     private void Awake()
     {
         if (persistentScript == null)                                    //
-        { persistentScript = this; DontDestroyOnLoad(gameObject); }      //garante que só tenha um desse script na cena
+        { persistentScript = this; DontDestroyOnLoad(gameObject); gameObject.AddComponent<Highscores>(); }      //garante que só tenha um desse script na cena
         else Destroy(gameObject);                                        //
 
         ExtLibControl.OnCommandCalled += UserActionsControl; //cahamado sempre que a proxima ação da fila é liberada
@@ -131,11 +132,15 @@ public class PersistentScript : MonoBehaviour
                         if (u.target == -1)
                         {
                             ExtLibControl.currentUAction.userAction.target = 1;
-                            holdTime = timeT0 + u.value;
+                            holdTime = u.value;
                         }
-                        else if (holdTime - timeT0 < 1e-8)
+                        else if (holdTime < 1e-8)
                         {
                             ExtLibControl.DeQueueAction();
+                        }
+                        else
+                        {
+                            holdTime -= Time.deltaTime;
                         }
                         break;
                     case "restart" when u.target == -1:

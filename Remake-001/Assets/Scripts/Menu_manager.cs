@@ -74,6 +74,19 @@ public class Menu_manager : MonoBehaviour
     {
         UpdateTexts();
         UpdateMapList();
+        Highscores.OnHighscoresDownloaded += Highscores_OnHighscoresDownloaded;
+    }
+
+    private void Highscores_OnHighscoresDownloaded(object sender, Highscore[] highscoreList)
+    {
+        if (highscoreList == null)
+        {
+            siteText.text = "PLACAR:\n --" + "Sem conexão, entre na rede para ver o placar ";
+        }
+        else
+        {
+            siteText.text = "PLACAR:\ndd/mm/aaaa ->pontuação: \"nome\" \n --" + string.Join("\n --", highscoreList) + "\n\n\n";
+        }
     }
 
     private void UpdateMapList()
@@ -103,12 +116,13 @@ public class Menu_manager : MonoBehaviour
         var score = playModeContent.GetChild(3).GetChild(0).GetComponentInChildren<Toggle>();
         playModeContent.GetChild(2).GetComponent<Button>().onClick  //playButton
             .AddListener(delegate {
-                PersistentScript.ClickSfx(); loading.SetActive(true); PersistentScript.currentMap= map;
+                loading.SetActive(true); PersistentScript.ClickSfx(); PersistentScript.currentMap= map;
                 PersistentScript.playType = (score.isOn) ? 0 : 1; SceneManager.LoadScene(map.scene);
                 string gameTypeDesc = (PersistentScript.playType==0)?
-                "Sua pontuação é dada na quantia de peças que coletar em 90s":
+                $"Sua pontuação é dada na quantia de peças que coletar em {map.maxTime}s":
                 "Sua pontuação é dada pelo menor tempo que conseguir coletar todas as pecas";        
                 PersistentScript.incomingMessage = map.longDescription + "\n" + gameTypeDesc;}); 
+
 
     }
 
@@ -118,6 +132,9 @@ public class Menu_manager : MonoBehaviour
     {
         StartCoroutine(UpdateNewsTab());
         StartCoroutine(UpdateLogsTab());
+        Highscores.instance.DownloadHighscores();
+        
+
     }
 
     IEnumerator UpdateNewsTab()

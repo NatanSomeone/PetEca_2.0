@@ -49,6 +49,7 @@ public class ClickableText : MonoBehaviour, IPointerClickHandler, IPointerEnterH
     float countDown;
     private void Update()
     {
+        
         //TOD  arruma isso
         //if (overTheText && (linkIndex > -1)) // apontando pro link
         //{

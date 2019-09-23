@@ -15,10 +15,16 @@ public class MenuManager_InGame : MonoBehaviour
     public Transform FileMenu;
     public Transform TaskQueueList;
     private Transform FileMenuContent;
+    [Space(6)]//MessageBox
     public Transform MessageBox;
     public TextMeshProUGUI MessageBoxText;
     public Button MessageBoxOkButton;
-
+    [Space(6)]//GameOverBox
+    public Transform GameOverBox;
+    public TextMeshProUGUI GameOverBoxText;
+    public TMP_InputField GameOverBoxInput;
+    public Button GameOverBoxSendButton;
+    [Space(6)]
     public TextMeshProUGUI TimeTextBox;
     public TextMeshProUGUI ScoreTextBox;
     public AudioClip[] clips;
@@ -31,18 +37,21 @@ public class MenuManager_InGame : MonoBehaviour
     public static float timePassed => Time.time - PersistentScript.timeT0;
     public static bool isPlaying = false;//check if the game is not paused
     public static int totalItens;
+    private AudioSource aSource;
 
     private void Awake()
     {
 
         instance = this;
+        aSource = this.GetComponent<AudioSource>();
+
         ExtLibControl.OnCommandCalled += UserActionControl;
         tasksToDisp = TaskQueueList.childCount - 1;
 
 
 
         TaskQueueList.parent.GetComponent<Toggle>().onValueChanged
-            .AddListener(v => { TaskQueueList.gameObject.SetActive(v); if (v) UpdateTaskQueueList(); });    //tasklist
+            .AddListener(v => { PersistentScript.ClickSfx(); TaskQueueList.gameObject.SetActive(v); if (v) UpdateTaskQueueList(); });    //tasklist
 
         FileMenuContent = FileMenu.GetChild(0).GetChild(0);
 
@@ -63,20 +72,30 @@ public class MenuManager_InGame : MonoBehaviour
             .AddListener(delegate { PersistentScript.ClickSfx(); SceneManager.LoadScene(0); PersistentScript.currentMap = null; });
 
         //MessageBox
-        MessageBoxOkButton.onClick.AddListener(delegate { PersistentScript.ClickSfx(); MessageBox.gameObject.SetActive(false); PauseLevel(false); });
+        MessageBoxOkButton.onClick.AddListener(delegate { PersistentScript.ClickSfx();
+            MessageBox.gameObject.SetActive(false); PauseLevel(false);PersistentScript.incomingMessage = null; });
+
+        //GameoverBox
+        GameOverBoxSendButton.onClick.AddListener(delegate
+        {
+            PersistentScript.ClickSfx(); GameOverBox.gameObject.SetActive(false);
+            var name = instance.GameOverBoxInput.text;
+            if (!string.IsNullOrEmpty(name))
+            { name = name.Replace('*', ' ').Replace('|', ' '); Highscores.AddNewHighscore(name + "§§" + DateTime.Now.ToOADate(), (int)PersistentScript.lastScore); }
+            ReloadLevel();/*send score*/
+        });
 
 
 
     }
     private void Start()
     {
-        isPlaying = true;
+        //isPlaying = true;
         PersistentScript.canRunUserActions = true;
         PersistentScript.currentScore = (PersistentScript.playType == 0) ? 0 : totalItens;
-        PersistentScript.timeT0 = (PersistentScript.playType == 0) ? 90.4f : 0;
+        PersistentScript.timeT0 = (PersistentScript.playType == 0) ? PersistentScript.currentMap.maxTime+.4f : 0;
         var audioS = GetComponent<AudioSource>();
 
-        ScoreTextBox.GetComponentInParent<TextMeshProUGUI>().text = (PersistentScript.playType == 0) ? "Pontuação:" : "Restantes:";
 
         Instantiate(PersistentScript.currentMap.MapPrefab);
         PersistentScript.persistentScript.ItemCollection = GameObject.Find("ItemCollection")?.transform;
@@ -97,15 +116,21 @@ public class MenuManager_InGame : MonoBehaviour
         //mudar para PersistentScript.currentMap.detailedDescription
         if (PersistentScript.incomingMessage == "Welcome")
         {
-            ShowInfoMessage(@"Bem vindo ao primeiro mapa, aqui sua aventura começar primeiramente vá {Map01-Menu/ NovoArquivoCpp} escreva seu programa e copile.
-	Ele deve ser capaz de direcionar o Robo ao quadro espaço amarelo, coletar seus itens e depositar no espaço vermelho, voltando ao espaço inicial para reposição de itens, o Jogo termina com três itens;
-    Para pegar um item , <b>levante a gaiola</b> aproxime-se dele e <b>abaixe a gaiola</b> em cima. Já para largar-lo , basta erguer a gaiola");
+            ShowInfoMessage(PersistentScript.currentMap.longDescription);
+ //           ShowInfoMessage(@"Bem vindo ao primeiro mapa, aqui sua aventura começar primeiramente vá {Map01-Menu/ NovoArquivoCpp} escreva seu programa e copile.
+	//Ele deve ser capaz de direcionar o Robo ao quadro espaço amarelo, coletar seus itens e depositar no espaço vermelho, voltando ao espaço inicial para reposição de itens, o Jogo termina com três itens;
+ //   Para pegar um item , <b>levante a gaiola</b> aproxime-se dele e <b>abaixe a gaiola</b> em cima. Já para largar-lo , basta erguer a gaiola");
         }
         else if (PersistentScript.incomingMessage != null)
         {
             ShowInfoMessage(PersistentScript.incomingMessage);
         }
+        else if (PersistentScript.incomingMessage == null)
+        {
+            PauseLevel(false);
+        }
 
+        ScoreTextBox.transform.parent.GetComponent<TextMeshProUGUI>().text = (PersistentScript.playType == 0) ? "Pontuação:" : "Restantes:";
 
     }
 
@@ -117,6 +142,7 @@ public class MenuManager_InGame : MonoBehaviour
         isPlaying = !v;
         instance.FileMenu.parent.GetChild(1).gameObject.SetActive(v);
         Time.timeScale = v ? 0 : PersistentScript.persistentScript.timescale;
+        instance.aSource.pitch = v ? 0.5f : 1f;
     }
 
     public static void ShowInfoMessage(string message, bool restart = false)
@@ -124,13 +150,26 @@ public class MenuManager_InGame : MonoBehaviour
         if (restart)
         {
             PersistentScript.incomingMessage = message;
-            ReloadLevel(); return;
+            ReloadLevel();PauseLevel(true);; return;
         }
         instance.MessageBoxText.text = message;
         instance.MessageBox.gameObject.SetActive(true);
         PauseLevel(true);
-        PersistentScript.incomingMessage = null;
 
+
+    }
+    public static void ShowGOverMessage(int score)
+    {
+        if (score <= 0)
+            ShowInfoMessage("Fim de jogo, você não obteve nenhuma pontuação", true);
+        else
+        {
+            instance.GameOverBoxText.text = $"Fim de jogo!\n Sua pontuação é de {score} ponto{((score == 1) ? "" : "s")}.";
+            PersistentScript.lastScore = score;
+            instance.GameOverBox.gameObject.SetActive(true);
+            PauseLevel(true);
+        }
+        ExtLibControl.ClearActionQueue();
     }
 
     private static void NewFile()
@@ -141,13 +180,13 @@ public class MenuManager_InGame : MonoBehaviour
             Directory.CreateDirectory(path);
 
         if (!File.Exists(path + "/petecavirtual.h"))
-            File.Copy(Application.dataPath + "/Resources/Libraries~/petecavirtual.h", path + "/petecavirtual.h", false);
+            File.Copy(Application.dataPath + "/Resources/StreamingAssets/Libraries~/petecavirtual.h", path + "/petecavirtual.h", false);
 
         string fileName = PersistentScript.currentMap?.name + "-file";
 
         if (!File.Exists($"{path}/{fileName}.cpp"))
         {
-            File.Copy(Application.dataPath + "/Resources/Libraries~/MasterExample.cpp", $"{path}/{fileName}.cpp", false);
+            File.Copy(Application.dataPath + "/Resources/StreamingAssets/Libraries~/MasterExample.cpp", $"{path}/{fileName}.cpp", false);
         }
         else
         {
@@ -223,7 +262,10 @@ public class MenuManager_InGame : MonoBehaviour
         var score = PersistentScript.currentScore;
 
         if (isPlaying) PersistentScript.timeT0 += ((PersistentScript.playType == 0) ? (t > -0.5f) ? -1 : 0 : 1) * Time.deltaTime;
-        if (t < 0) { ShowInfoMessage($"Time is UP, you goted {score} point{((score == 1) ? "" : "s")}", true); }
+        if (t < 0)
+        {
+            ShowGOverMessage(Mathf.RoundToInt(score));
+        }
 
         TimeTextBox.text = $"{((int)t / 60) % 60,4:00}{(((t / 2) % 2 == 0) ? " " : ":")}{((int)t % 60),2:00}";
         ScoreTextBox.text = $"#{score,4:0000}";
