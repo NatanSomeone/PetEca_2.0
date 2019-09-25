@@ -119,8 +119,8 @@ public class Menu_manager : MonoBehaviour
                 loading.SetActive(true); PersistentScript.ClickSfx(); PersistentScript.currentMap= map;
                 PersistentScript.playType = (score.isOn) ? 0 : 1; SceneManager.LoadScene(map.scene);
                 string gameTypeDesc = (PersistentScript.playType==0)?
-                $"Sua pontuação é dada na quantia de peças que coletar em {map.maxTime}s":
-                "Sua pontuação é dada pelo menor tempo que conseguir coletar todas as pecas";        
+                $"\tSua pontuação é dada na quantia de peças que coletar em {map.maxTime}s":
+                "\tSua pontuação é dada pelo menor tempo que conseguir coletar todas as pecas";        
                 PersistentScript.incomingMessage = map.longDescription + "\n" + gameTypeDesc;}); 
 
 
