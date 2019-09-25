@@ -68,6 +68,7 @@ public class Highscores : MonoBehaviour
 
     void FormatHighscores(string textStream)
     {
+        System.Globalization.CultureInfo invariantCulture = System.Globalization.CultureInfo.InvariantCulture;
         string[] entries = textStream.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
         highscoresList = new Highscore[entries.Length];
 
@@ -75,8 +76,8 @@ public class Highscores : MonoBehaviour
         {
             string[] entryInfo = entries[i].Split(new char[] { '|' });
             string username = entryInfo[0].Split("§§".ToCharArray())[0].Replace('+',' ');
-            int score = int.Parse(entryInfo[1]);
-            DateTime time = DateTime.Parse(entryInfo[4]);
+            int score = int.Parse(entryInfo[1], invariantCulture);
+            DateTime time = DateTime.Parse(entryInfo[4], invariantCulture);
             highscoresList[i] = new Highscore(username, score,time);
             //print(highscoresList[i].username + ": " + highscoresList[i].score);
         }

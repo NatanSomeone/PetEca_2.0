@@ -77,9 +77,10 @@ public class ItemHandler : MonoBehaviour
         //    //PersistentScript.incomingMessage = "Levante sua gaiola para pegar o objeto, sem empurrar!!";
         //    //MenuManager_InGame.ReloadLevel();
         //}
-        if (cTag == "pickItem") {
+        if (cTag == "pickItem")
+        {
             dir = c.GetContact(0).normal;
-            c.collider.transform.position -=new Vector3(dir.x, 0, dir.z)*Time.deltaTime*10f;
+            c.collider.transform.position -= new Vector3(dir.x, 0, dir.z) * Time.deltaTime * 10f;
         }
         else if (cTag == "wall")
         {
@@ -114,6 +115,16 @@ public class ItemHandler : MonoBehaviour
 
         //Gizmos.color = Color.blue;
         //Gizmos.DrawRay(c+transform.forward*0.6f, transform.forward*0.6f+dir * .6f);
+    }
+    private void OnGUI()
+    {
+        if (PersistentScript.DEBUGmode) {
+            GUI.Label(new Rect(0, 30, Screen.width, Screen.height - 30),
+                $"<color=#000099>" +
+                $"Physics.Raycast(ray, 0.6f, LayerMask.GetMask(\"wall\"));" +
+                $"</color>");
+        }
+
     }
 
 }

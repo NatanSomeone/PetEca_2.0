@@ -29,6 +29,7 @@ public class PersistentScript : MonoBehaviour
     public float timescale = 1;
     private float holdTime;
     private int currentCamera;
+    public static bool DEBUGmode;
 
     public static void ClickSfx() => AudioSource.PlayClipAtPoint(persistentScript?.clickClip, new Vector3(5, 1, 2));
 
@@ -103,6 +104,11 @@ public class PersistentScript : MonoBehaviour
         {
             currentCamera = (currentCamera + 1) % cameraHolder.childCount;
             ExtLibControl.userActions.Enqueue(new ExtLibControl.UserAction("cam", -1, currentCamera));
+        }
+
+        if (Input.GetKeyDown(KeyCode.KeypadDivide))
+        {
+            DEBUGmode = !DEBUGmode;
         }
 
 
