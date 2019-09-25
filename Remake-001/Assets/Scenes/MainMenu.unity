@@ -7063,7 +7063,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 136.7593, y: 0}
-  m_SizeDelta: {x: 273.5186, y: 190.58}
+  m_SizeDelta: {x: 273.5186, y: 174.61}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1262558636
 MonoBehaviour:
@@ -7099,8 +7099,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: "DOCUMENTA\xC7\xC3O:\n\tA documenta\xE7\xE3o pode ser encontrada no site
     <u><i><link =site>https://www.sorocaba.unesp.br/Home/PaginaDocentes/PET-ECA/documentacao_petecavirtual.pdf</link></i></u>\n\n\nSITE:
-    \nEntrando no site abaixo voce pode encontrar mias informa\xE7\xF5es.\n<u><i><link
-    =site>https://www.sorocaba.unesp.br/#!/programas-especiais/pet-eca/programas/peteca-desafios/</link></i></u>\n"
+    \n\tPara mais informa\xE7\xF5es acesse :\n<u><i><link =site>https://www.sorocaba.unesp.br/#!/programas-especiais/pet-eca/programas/peteca-desafios/</link></i></u>\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 734811f9949eebc4092f650e9d4ed0ae, type: 2}
   m_sharedMaterial: {fileID: -1141906486198515234, guid: 734811f9949eebc4092f650e9d4ed0ae,
@@ -7170,12 +7169,12 @@ MonoBehaviour:
   m_margin: {x: 2, y: 5, z: 2, w: 10}
   m_textInfo:
     textComponent: {fileID: 1262558637}
-    characterCount: 306
+    characterCount: 276
     spriteCount: 0
-    spaceCount: 24
-    wordCount: 38
+    spaceCount: 21
+    wordCount: 33
     linkCount: 2
-    lineCount: 11
+    lineCount: 10
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
