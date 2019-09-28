@@ -1,5 +1,4 @@
-  Beta a caminho
- Após um longo caminho trilhado, o PetecaVirtual está de pé. Podem aparecer alguns problemas, então por favor, reportem qualquer coisa estranha para nós.
+﻿ Após um longo caminho trilhado, o PetecaVirtual está de pé. Podem aparecer alguns problemas, então por favor, reporte-nos qualquer coisa estranha.
  Estamos na versão v0.1.16 , aguardando por futuras atualizações.
-Postado em 7, Setembro, 2019 por PetecaVirtual
+Postado em 16, Setembro, 2019 por PetecaVirtual
 
