@@ -79,12 +79,14 @@ public class MenuManager_InGame : MonoBehaviour
         GameOverBoxSendButton.onClick.AddListener(delegate
         {
             PersistentScript.ClickSfx(); GameOverBox.gameObject.SetActive(false);
+            if (PersistentScript.usr != null) instance.GameOverBoxInput.text = PersistentScript.usr.givenName;
             var name = instance.GameOverBoxInput.text;
             if (!string.IsNullOrEmpty(name))
-            { name = name.Replace('*', ' ').Replace('|', ' '); Highscores.AddNewHighscore(name + "§§" + DateTime.Now.ToOADate(), (int)PersistentScript.lastScore); }
+            { name = name.Replace('*', ' ').Replace('|', ' '); Highscores.AddNewHighscore(name + "§§" + DateTime.Now.ToOADate() + "§§" + PersistentScript.userSecretValue, (int)PersistentScript.lastScore); }
             ReloadLevel();/*send score*/
         });
 
+            //{ name = name.Replace('*', ' ').Replace('|', ' '); Highscores.AddNewHighscore(name + "§§" + DateTime.Now.ToOADate(), (int)PersistentScript.lastScore); }
 
 
     }
@@ -98,8 +100,8 @@ public class MenuManager_InGame : MonoBehaviour
 
 
         Instantiate(PersistentScript.currentMap.MapPrefab);
-        PersistentScript.persistentScript.ItemCollection = GameObject.Find("ItemCollection")?.transform;
-        PersistentScript.persistentScript.cameraHolder = GameObject.Find("Camera-holder").transform;
+        PersistentScript.instance.ItemCollection = GameObject.Find("ItemCollection")?.transform;
+        PersistentScript.instance.cameraHolder = GameObject.Find("Camera-holder").transform;
 
         if (clips.Length > 0)
         {
@@ -141,7 +143,7 @@ public class MenuManager_InGame : MonoBehaviour
 
         isPlaying = !v;
         instance.FileMenu.parent.GetChild(1).gameObject.SetActive(v);
-        Time.timeScale = v ? 0 : PersistentScript.persistentScript.timescale;
+        Time.timeScale = v ? 0 : PersistentScript.instance.timescale;
         instance.aSource.pitch = v ? 0.5f : 1f;
     }
 

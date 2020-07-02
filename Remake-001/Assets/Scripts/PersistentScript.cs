@@ -8,9 +8,9 @@ using UnityEngine.SceneManagement;
 public class PersistentScript : MonoBehaviour
 {
     //Ultilidade Publica
-    public static PersistentScript persistentScript;
+    public static PersistentScript instance;
     public static readonly Queue<Action> ExecuteOnMainThread = new Queue<Action>();
-
+    public static string userSecretValue;
 
     //GameVariables
     public static MapDisplayInfo currentMap;
@@ -21,6 +21,7 @@ public class PersistentScript : MonoBehaviour
     public static float currentScore;
     public static int lastScore;
     public static int playType;//0_By-score * 1_By-time
+    public static Menu_manager.User.UserObject usr;
 
     public AudioClip clickClip;
     public Transform ItemCollection;
@@ -31,12 +32,12 @@ public class PersistentScript : MonoBehaviour
     private int currentCamera;
     public static bool DEBUGmode;
 
-    public static void ClickSfx() => AudioSource.PlayClipAtPoint(persistentScript?.clickClip, new Vector3(5, 1, 2));
+    public static void ClickSfx() => AudioSource.PlayClipAtPoint(instance?.clickClip, new Vector3(5, 1, 2));
 
     private void Awake()
     {
-        if (persistentScript == null)                                    //
-        { persistentScript = this; DontDestroyOnLoad(gameObject); gameObject.AddComponent<Highscores>(); }      //garante que só tenha um desse script na cena
+        if (instance == null)                                    //
+        { instance = this; DontDestroyOnLoad(gameObject); gameObject.AddComponent<Highscores>();}      //garante que só tenha um desse script na cena
         else Destroy(gameObject);                                        //
 
         ExtLibControl.OnCommandCalled += UserActionsControl; //cahamado sempre que a proxima ação da fila é liberada
@@ -52,8 +53,6 @@ public class PersistentScript : MonoBehaviour
         //    });
 
         //}
-
-
     }
 
     void Start()

@@ -80,6 +80,8 @@ public class Highscores : MonoBehaviour
             DateTime time = DateTime.Parse(entryInfo[4], invariantCulture);
             highscoresList[i] = new Highscore(username, score,time);
             //print(highscoresList[i].username + ": " + highscoresList[i].score);
+            string userScore = entryInfo[0].Split("§§".ToCharArray())[2].Replace('+',' ');
+            print("Secrets = "+ userScore);
         }
     }
 

@@ -16,7 +16,7 @@ public class ItemSpawnerPad : MonoBehaviour
 
     public void SpawnItem()
     {
-        var o = Instantiate(Item, PersistentScript.persistentScript.ItemCollection);
+        var o = Instantiate(Item, PersistentScript.instance.ItemCollection);
         o.transform.position = this.transform.position+ Vector3.up*0.04f;
         o.AddComponent<Item>().PadParent = this;
         o.tag = "pickItem";

@@ -93,7 +93,7 @@ public class ItemHandler : MonoBehaviour
 
         if (driver.clawState && ItemHeld != null) //se gaiola levantada e item dentro dropa
         {
-            ItemHeld.SetParent(PersistentScript.persistentScript.ItemCollection);
+            ItemHeld.SetParent(PersistentScript.instance.ItemCollection);
             var p = ItemHeld.transform.position;
             p = new Vector3(p.x, 0.04f, p.z);
             ItemHeld.rotation = Quaternion.identity;

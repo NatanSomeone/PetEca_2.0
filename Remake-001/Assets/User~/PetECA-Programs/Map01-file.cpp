@@ -16,7 +16,7 @@ int Main(){
 			Move(3);
 			for(int i = 0;i<3;i++){
 				Rotate(-90);
-				Move(3);
+				Move(8);
 				Claw();
 				Wait(1);
 				Claw();
